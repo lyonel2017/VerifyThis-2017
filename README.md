@@ -1,4 +1,4 @@
-#About VerifyThis 2017
+# About VerifyThis 2017
 
 VerifyThis 2017 is a program verification competition taking place as part of the European Joint Conferences on Theory 
 and Practice of Software (ETAPS 2017) on April 22-23, 2017 in Uppsala, Sweden. It is the 6th event in the VerifyThis competition series.
@@ -14,6 +14,6 @@ Participants have to formalize the requirements, implement a solution, and forma
 There are no restrictions on the programming language and verification technology used. The correctness properties posed in problems 
 will have the input-output behavior of programs in focus. Solutions will be judged for correctness, completeness, and elegance. 
 
-#About this project
+# About this project
 
 This project exist for the traning with Frama-C for the participation to VerifyThis 2017. 
