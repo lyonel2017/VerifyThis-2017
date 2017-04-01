@@ -26,29 +26,28 @@
 void matrixMultiply(int **a, int **b, int **c,int n) {
 
   /*@ loop invariant 0 <= i <= n;
-    @ loop invariant \forall integer p,t; 0 <= p < n && 0 <= t < i ==> c[t][p] == sum_matrix(a,b,t,p,0,n);
     @ loop invariant \forall integer p,t; 0 <= p < n && i <= t < n ==> c[t][p] == 0;
+    @ loop invariant \forall integer p,t; 0 <= p < n && 0 <= t < i ==> c[t][p] == sum_matrix(a,b,t,p,0,n);
     @ loop assigns i,c[0..n-1][0..n-1];*/
     for (int i = 0; i < n; i++) {
-      /*@ghost M:*/
       /*@ loop invariant 0 <= i < n;
-	@ loop invariant 0 <= j <= n;
-	@ loop invariant \forall integer p,t; 0 <= p < j && 0 <= t < i ==> c[t][p] == sum_matrix(a,b,t,p,0,n);
-	@ loop invariant \forall integer p,t; 0 <= p < n && 0 <= t < n && p != j ==> c[t][p] == \at(c[t][p],M);
-	@ loop assigns i,j,c[0..n-1][0..n-1];*/
-      for (int j = 0; j < n; j++) {
-	/*@ghost I:*/
+	@ loop invariant 0 <= k <= n;
+	@ loop invariant \forall integer p,t; 0 <= p < n && i < t < n ==> c[t][p] == 0;
+	@ loop invariant \forall integer p,t; 0 <= p < n && 0 <= t < i ==> c[t][p] == sum_matrix(a,b,t,p,0,n);
+	@ loop invariant \forall integer p; 0 <= p < n ==> c[i][p] == sum_matrix(a,b,i,p,0,k);
+	@ loop assigns i,k,c[0..n-1][0..n-1];*/
+      for (int k = 0; k < n; k++) {
 	/*@ loop invariant 0 <= i < n;
-	  @ loop invariant 0 <= j < n;
-	  @ loop invariant 0 <= k <= n;
-	 /@ loop invariant c[i][j] == sum_matrix(a,b,i,j,0,k);
-	  @ loop invariant \forall integer p,t; 0 <= p < n && 0 < t < n && p != j && t != i ==> c[t][p] == \at(c[t][p],I);
-	  @ loop assigns i,j,k,c[i][j];*/
-           for (int k = 0; k < n; k++) {
-                 c[i][j] += a[i][k] * b[k][j];
+	  @ loop invariant 0 <= j <= n;
+	  @ loop invariant 0 <= k < n;
+	  @ loop invariant \forall integer p,t; 0 <= p < n && i < t < n ==> c[t][p] == 0;
+	  @ loop invariant \forall integer p,t; 0 <= p < n && 0 <= t < i ==> c[t][p] == sum_matrix(a,b,t,p,0,n);
+	  @ loop invariant \forall integer p; 0 <= p < j ==> c[i][p] == sum_matrix(a,b,i,p,0,k+1);
+	  @ loop assigns i,j,k,c[i][0..n-1];*/
+           for (int j = 0; j < n; j++) {
+                 c[i][j] = c[i][j] + a[i][k] * b[k][j];
 	   }
       }
     }
-    /* assert \false;*/
     return;
  }
