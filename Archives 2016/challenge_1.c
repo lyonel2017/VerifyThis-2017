@@ -15,12 +15,17 @@
   @ requires \valid(a+(0..n-1));
   @ requires \valid(b+(0..n-1));
   @ requires \valid(c+(0..n-1));
+  @ requires \separated(a+(0..n-1));
+  @ requires \separated(b+(0..n-1));
+  @ requires \separated(c+(0..n-1));
+  @ requires \separated(a,b,c);
   @ requires \forall integer k; 0 <= k < n ==> \valid(a[k]+(0..n-1));
   @ requires \forall integer k; 0 <= k < n ==> \valid(b[k]+(0..n-1));
   @ requires \forall integer k; 0 <= k < n ==> \valid(c[k]+(0..n-1));
-  @ requires \forall integer x1,x2,y1,y2,z1,z2; 
-  @ 0 <= x1 < n && 0 <= y1 < n && 0 <= z1 < n && 0 <= x2 < n && 0 <= y2 < n && 0 <= z2 < n ==> 
-  @ \separated(a[x1]+(0..n-1),b[y1]+(0..n-1),c[z1]+(0..n-1),a[x2]+(0..n-1),b[y2]+(0..n-1),c[z2]+(0..n-1),a+(0..n-1),b+(0..n-1),c+(0..n-1));
+  @ requires \forall integer x1,x2,y1,y2; 0 <= x1 < n && 0 <= x2 < n && 0 <= y1 < n && 0 <= y2 < n && x1 != x2 ==> \separated(a[x1]+y1,a[x2]+y2);
+  @ requires \forall integer x1,x2,y1,y2; 0 <= x1 < n && 0 <= x2 < n && 0 <= y1 < n && 0 <= y2 < n && x1 != x2 ==> \separated(b[x1]+y1,b[x2]+y2);
+  @ requires \forall integer x1,x2,y1,y2; 0 <= x1 < n && 0 <= x2 < n && 0 <= y1 < n && 0 <= y2 < n && x1 != x2 ==> \separated(c[x1]+y1,c[x2]+y2);
+  @ requires \forall integer x,y,z; 0 <= x < n && 0 <= y < n && 0 <= z < n ==> \separated(a[x],b[y],c[z]); 
   @ requires \forall int i,j; 0 <= i < n && 0 <= j < n ==> c[i][j] == 0;
   @ assigns c[0..n-1][0..n-1];
   @ ensures matrix_prod(a,b,c,n);
