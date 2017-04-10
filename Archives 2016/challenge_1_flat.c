@@ -1,11 +1,18 @@
 /*@ axiomatic sum_axiomatic {
-  @   logic integer sum (int* a, int* b, integer i, integer j, integer n, integer k);
+  @   logic integer sum (int* a, int* b, integer i, integer j, integer n, integer k)
+  @     reads a[0..n*n-1], b[0..n*n-1];
   @
   @   axiom sum_nil : \forall int *a, *b, integer i, j, n; sum (a, b, i, j, n, 0) == 0;
   @   axiom sum_next : \forall int *a, *b, integer i, j, n, k;
   @     sum (a, b, i, j, n, k + 1) == sum (a, b, i, j, n, k) + a[i*n+k]*b[k*n+j];
   @ }
 */
+
+/*@ lemma sum_only_read{L1,L2} :
+      \forall int *a, *b, integer i, j, n, k; 0 <= i < n && 0 <= j < n && n >= 0 && 0 <= k <= n &&
+        (\forall integer l; 0 <= l < n * n ==> \at(a[l],L1) == \at(a[l],L2) && \at(b[l],L1) == \at(b[l],L2)) ==>
+        sum{L1} (a, b, i, j, n, k) == sum{L2} (a, b, i, j, n, k);
+ */
 
 /*@ requires \separated(a+(0..n*n-1),c+(0..n*n-1));
   @ requires \separated(b+(0..n*n-1),c+(0..n*n-1));
