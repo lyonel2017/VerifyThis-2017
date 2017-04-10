@@ -8,4 +8,28 @@ Proof.
   repeat split; simpl; Psatz.nia.
 Qed.
 
+Goal typed_matrix_mult_loop_inv_2_preserved.
+Hint matrix_mult,preserved.
+Proof.
+  intros.
+  assert (i = i_1) by omega. subst i_1.
+  apply Zle_lt_or_eq in H6.
+  destruct H6.
+  - rewrite <- H26 by omega. replace (i_4*i) with (i*i_4) by ring.
+    symmetry.
+    apply H24.
+    do 4 right. simpl. unfold x_1. Psatz.nia.
+  - subst i_4.
+    apply H25; omega.
+Qed.
+
+Goal typed_matrix_mult_loop_inv_6_preserved.
+Hint matrix_mult,preserved.
+Proof.
+  intros.
+  unfold x_6, x_5, x_4, x_3, x_2, x_1, x.
+  replace (i*i_1) with (i_1*i) by ring.
+  apply A_sum_axiomatic.Q_sum_next.
+Qed.
+
 
