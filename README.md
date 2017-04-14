@@ -1,3 +1,5 @@
+Pour pouvoir discuter avec Loïc, j'ai créé un projet sur gitlab (verify-this).
+
 # About VerifyThis 2017
 
 VerifyThis 2017 is a program verification competition taking place as part of the European Joint Conferences on Theory 
