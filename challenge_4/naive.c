@@ -1,3 +1,5 @@
+/* This is an implementation of the naive version in C with ACSL annotations. */
+
 #include <stdlib.h>
 
 struct buff {
