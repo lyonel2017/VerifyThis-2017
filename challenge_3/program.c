@@ -22,6 +22,8 @@
     requires 0 <= j;
     requires n >= 0;
     requires i < j;
+    requires j < n;
+    requires i < n;
     requires \valid(list+(0..n-1));
     ensures \forall integer k; k != i && k != j && 0 <= k < n ==> list[k] == \old(list[k]);
     ensures list[j]==\old(list[i]);
@@ -33,6 +35,7 @@ void swap (int list[], int i, int j,int n) {
   int temp = list[i];
   list[i] = list[j];
   list[j] = temp;
+  /*@ assert swap{Pre, Here}(list, i, j, n);*/
 }
 
 /*@ requires n >= 0;
