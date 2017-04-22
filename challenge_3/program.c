@@ -5,6 +5,7 @@
     ensures \forall integer k; k != i && k != j ==> list[k] == \old(list[k]);
     ensures list[j]==\old(list[i]);
     ensures list[i]==\old(list[j]);
+    assigns list[i],list[j];
 */
 void swap (int list[], int i, int j) {
   int temp = list[i];
@@ -41,13 +42,16 @@ void swap (int list[], int i, int j) {
 void oddEvenSort (int list[], int n) {
   int sorted = 0;
   /*@ loop invariant 0 <= sorted <= 1;
+    @ loop invariant same_elements{Pre, Here}(list, n);
+    @ loop assigns sorted,list[0..n-1];
   */
   while(!sorted) {
     sorted=1;
-    /*@ loop invariant 1 <= i <= n;
-        loop invariant 
-        loop assigns i, list, sorted;
-        loop variant n - i;
+    /*@ loop invariant 0 <= sorted <= 1;
+      @ loop invariant 1 <= i <= n+1; 
+      @ loop invariant same_elements{Pre, Here}(list, n);
+      @ loop assigns i, list[0..n-1], sorted;
+      @ loop variant n - i;
     */
     for(int i = 1; i < n-1; i+=2) {
       if (list[i] > list[i+1]) {
@@ -55,10 +59,11 @@ void oddEvenSort (int list[], int n) {
         sorted = 0;
       }
     }
-
-    /*@ loop invariant 0 <= i <= n;
-        loop assigns i, list, sorted;
-        loop variant n - i;
+    /*@ loop invariant 0 <= sorted <= 1;
+      @ loop invariant 0 <= i <= n;
+      @ loop invariant same_elements{Pre, Here}(list, n);
+      @ loop assigns i, list[0..n-1], sorted;
+      @ loop variant n - i;
     */
     for(int i = 0; i < n-1; i+=2) {
       if (list[i] > list[i+1]) {
