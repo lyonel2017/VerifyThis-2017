@@ -108,23 +108,29 @@
         swap_list (l1, l2, i, j) ==>
         l1 == (sub_list (l1, 0, i) ^ [| \nth (l1, i) |] ^ sub_list (l1, i+1, j) ^ [| \nth (l1, j) |] ^ sub_list (l1, j+1, \length(l1))) &&
         l2 == (sub_list (l1, 0, i) ^ [| \nth (l1, j) |] ^ sub_list (l1, i+1, j) ^ [| \nth (l1, i) |] ^ sub_list (l1, j+1, \length(l1)));
-    lemma num_of_swap_list_same_elements : \forall \list<integer> m1, integer a, v;
-      num_of (\Cons (a, m1), v) == (a == v ? 1 : 0) + num_of (m1, v);
-    lemma num_of_swap_list_same_elements_eq : \forall \list<integer> m1, integer a, v;
-      a== v ==>
-      num_of (\Cons (a, m1), v) == 1 + num_of (m1, v);
-    lemma num_of_swap_list_same_elements_neq : \forall \list<integer> m1, integer a, v;
-      a != v ==>
-      num_of (\Cons (a, m1), v) == num_of (m1, v);
-    lemma swap_list_same_elements_alpha_alpha31 : \forall \list<integer> m1, integer a, v;
-      \let m2 = [| a |];
-      num_of (m1 ^ m2, v) == num_of (m1, v) + (a == v ? 1 : 0);
-    lemma swap_list_same_elements_alpha_alpha3 : \forall \list<integer> m1, m2, integer a, v;
-      num_of (m1 ^ [| a |] ^ m2, v) == num_of (m1, v) + (a == v ? 1 : 0) + num_of (m2, v);
-    lemma swap_list_same_elements_alpha_alpha : \forall \list<integer> m1, m2, m3, integer a, b, v;
-      v != a ==> v != b ==>
-      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + (a == v ? 1 : 0) + num_of (m2, v) + (b == v ? 1 : 0) + num_of(m3, v);
-    lemma swap_list_same_elements_alpha : \forall \list<integer> m1, m2, m3, integer a, b;
+    lemma swap_list_same_elements_aux_1 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + num_of ([| a |] ^ m2 ^ [| b |] ^ m3, v);
+    lemma swap_list_same_elements_aux_2 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + num_of ([| a |], v) + num_of (m2 ^ [| b |] ^ m3, v);
+    lemma swap_list_same_elements_aux_3 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + num_of ([| a |], v) + num_of(m2 ^ [| b |] ^ m3, v);
+    lemma swap_list_same_elements_aux_4 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + num_of ([| a |], v) + num_of(m2, v) + num_of([| b |] ^ m3, v);
+    lemma swap_list_same_elements_aux_41 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+      num_of ([| b |] ^ m3, v) == num_of([| b |], v) + num_of(m3, v);
+    lemma swap_list_same_elements_aux_5 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + num_of ([| a |], v) + num_of(m2, v) + num_of([| b |], v) + num_of(m3, v);
+//    lemma swap_list_same_elements_aux_6 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+//      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1 ^ [| a |] ^ m2 ^ [| b |], v) + num_of(m3, v);
+//    lemma swap_list_same_elements_aux_7 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+//      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1 ^ [| a |] ^ m2, v) + num_of ([| b |], v) + num_of(m3, v);
+//    lemma swap_list_same_elements_aux_8 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+//      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1 ^ [| a |], v) + num_of( m2, v) + num_of ([| b |], v) + num_of(m3, v); 
+//    lemma swap_list_same_elements_aux_81 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+//      num_of (m1 ^ [| a |], v) == num_of (m1, v) + num_of ([| a |], v);
+//    lemma swap_list_same_elements_aux_9 : \forall \list<integer> m1, m2, m3, integer a, b, v;
+//      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + num_of([| a |], v) + num_of( m2, v) + num_of ([| b |], v) + num_of(m3, v);
+    lemma swap_list_same_elements_aux : \forall \list<integer> m1, m2, m3, integer a, b;
         same_elements_list (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, m1 ^ [| b |] ^ m2 ^ [| a |] ^ m3);
     lemma swap_list_same_elements : \forall \list<integer> l1, l2, integer i, j;
       swap_list (l1, l2, i, j) ==>
