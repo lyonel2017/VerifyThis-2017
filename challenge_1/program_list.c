@@ -28,7 +28,7 @@
       lemma sub_list_nth : \forall \list<integer> l, integer begin, end;
         0 <= begin <= end <= \length (l) ==> \forall integer k;
         0 <= k < end-begin ==> \nth (sub_list (l, begin, end), k) == \nth (l, begin+k);
-      logic \list<integer> tail (\list<integer> l) = sub_list (l, 1, \length (l));
+        logic \list<integer> tail (\list<integer> l) = sub_list (l, 1, \length (l));
       lemma tail_length : \forall \list<integer> l;
         0 < \length (l) ==> \length (tail (l)) == \length (l) - 1;
       lemma tail_nth : \forall \list<integer> l; 0 < \length (l) ==>
@@ -69,44 +69,69 @@
       \forall integer k; begin <= k < end ==> \nth (l1, k) == \nth (l2, k);
 
     axiomatic num_of {
-      logic integer num_of (\list<integer> l, integer begin, integer end, integer value);
-      axiom num_of_zero : \forall \list<integer> l, integer begin, end, value;
-        begin >= end ==> num_of (l, begin, end, value) == 0;
-      axiom num_of_pos_eq : \forall \list<integer> l, integer begin, end, value;
-        begin < end ==> \nth (l, end - 1) == value ==>
-        num_of(l, begin, end, value) == 1 + num_of (l, begin, end-1, value);
-      axiom num_of_pos_neq : \forall \list<integer> l, integer begin, end, value;
-        begin < end ==> \nth (l, end - 1) != value ==>
-        num_of (l, begin, end, value) == num_of (l, begin, end-1, value);
-      lemma num_of_same_list : \forall \list<integer> l1, l2, integer begin, end, value;
-        same_list (l1, l2, begin, end) ==> num_of (l1, begin, end, value) == num_of (l2, begin, end, value);
-      lemma num_of_split : \forall \list<integer> l, integer begin, k, end;
-        0 <= begin <= k <= end ==>
-        \forall integer value; num_of (l, begin, end, value) == num_of (l, begin, k, value) + num_of (l, k, end, value);
+      logic integer num_of (\list<integer> l, integer value);
+      axiom num_of_zero : \forall integer value;
+        num_of ([| |], value) == 0;
+      axiom num_of_pos_eq : \forall \list<integer> l, integer value;
+        0 < \length(l) ==> \nth (l, 0) == value ==>
+        num_of(l, value) == 1 + num_of (tail(l), value);
+      axiom num_of_pos_neq : \forall \list<integer> l, integer value;
+        0 < \length(l) ==> \nth (l, 0) != value ==>
+        num_of (l, value) == num_of (tail(l), value);
+      lemma num_of_split : \forall \list<integer> l1, l2, integer value;
+        num_of (l1 ^ l2, value) == num_of (l1, value) + num_of (l2, value);
+      lemma num_of_cons : \forall \list<integer> l1, integer x, integer value;
+        num_of (\Cons (x, l1), value) == (x == value ? 1 + num_of (l1, value) : num_of (l1, value));
     }
 
-    predicate same_elements_list (\list<integer> l1, \list<integer> l2, integer begin, integer end) =
-      \forall integer value; num_of (l1, begin, end, value) == num_of (l2, begin, end, value);
-    lemma same_elements_list_refl : \forall \list<integer> l1, l2, integer begin, end;
-      same_list (l1, l2, begin, end) ==> same_elements_list (l1, l2, begin, end);
+    predicate same_elements_list (\list<integer> l1, \list<integer> l2) =
+      \length (l1) == \length (l2) &&
+      \forall integer value; num_of (l1, value) == num_of (l2, value);
+    lemma same_elements_list_refl : \forall \list<integer> l1;
+      same_elements_list (l1, l1);
     lemma same_elements_list_trans : \forall \list<integer> l1, l2, l3, integer begin, end;
-      same_elements_list (l1, l2, begin, end) ==> same_elements_list (l2, l3, begin, end) ==>
-      same_elements_list (l1, l3, begin, end);
+      same_elements_list (l1, l2) ==> same_elements_list (l2, l3) ==>
+      same_elements_list (l1, l3);
 
-    predicate swap_list(\list<integer> l1, \list<integer> l2, integer begin, integer i, integer j, integer end) =
-      0 <= begin <= i < j < end <= \length (l1) &&
+    predicate swap_list(\list<integer> l1, \list<integer> l2, integer i, integer j) =
+      \length(l1) == \length (l2) &&
+      0 <= i < j < \length (l1) &&
       \nth (l1, i) == \nth (l2, j) &&
       \nth (l1, j) == \nth (l2, i) &&
-      \forall integer k; begin <= k < end && k != i && k != j ==> \nth (l1, k) == \nth (l2, k);
-    lemma swap_split : \forall \list<integer> l1, l2, integer begin, i, j, end;
-        swap_list (l1, l2, begin, i, j, end) ==>
-        sub_list (l1, begin, end) == (sub_list (l1, begin, i) ^ [| \nth (l1, i) |] ^ sub_list (l1, i+1, j) ^ [| \nth (l1, j) |] ^ sub_list (l1, j+1, end));
-    lemma swap_list_same_elements : \forall \list<integer> l1, l2, integer begin, i, j, end;
-      swap_list (l1, l2, begin, i, j, end) ==>
-      same_elements_list (l1, l2, begin, end);
+      \forall integer k; 0 <= k < \length(l1) && k != i && k != j ==> \nth (l1, k) == \nth (l2, k);
+    lemma swap_sym : \forall \list<integer> l1, l2, integer i, j;
+      swap_list (l1, l2, i, j) ==> swap_list (l2, l1, i, j);
+    lemma swap_split : \forall \list<integer> l1, l2, integer i, j;
+        swap_list (l1, l2, i, j) ==>
+        l1 == (sub_list (l1, 0, i) ^ [| \nth (l1, i) |] ^ sub_list (l1, i+1, j) ^ [| \nth (l1, j) |] ^ sub_list (l1, j+1, \length(l1)));
+    lemma swap_split2 : \forall \list<integer> l1, l2, integer i, j;
+        swap_list (l1, l2, i, j) ==>
+        l1 == (sub_list (l1, 0, i) ^ [| \nth (l1, i) |] ^ sub_list (l1, i+1, j) ^ [| \nth (l1, j) |] ^ sub_list (l1, j+1, \length(l1))) &&
+        l2 == (sub_list (l1, 0, i) ^ [| \nth (l1, j) |] ^ sub_list (l1, i+1, j) ^ [| \nth (l1, i) |] ^ sub_list (l1, j+1, \length(l1)));
+    lemma num_of_swap_list_same_elements : \forall \list<integer> m1, integer a, v;
+      num_of (\Cons (a, m1), v) == (a == v ? 1 : 0) + num_of (m1, v);
+    lemma num_of_swap_list_same_elements_eq : \forall \list<integer> m1, integer a, v;
+      a== v ==>
+      num_of (\Cons (a, m1), v) == 1 + num_of (m1, v);
+    lemma num_of_swap_list_same_elements_neq : \forall \list<integer> m1, integer a, v;
+      a != v ==>
+      num_of (\Cons (a, m1), v) == num_of (m1, v);
+    lemma swap_list_same_elements_alpha_alpha31 : \forall \list<integer> m1, integer a, v;
+      \let m2 = [| a |];
+      num_of (m1 ^ m2, v) == num_of (m1, v) + (a == v ? 1 : 0);
+    lemma swap_list_same_elements_alpha_alpha3 : \forall \list<integer> m1, m2, integer a, v;
+      num_of (m1 ^ [| a |] ^ m2, v) == num_of (m1, v) + (a == v ? 1 : 0) + num_of (m2, v);
+    lemma swap_list_same_elements_alpha_alpha : \forall \list<integer> m1, m2, m3, integer a, b, v;
+      v != a ==> v != b ==>
+      num_of (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, v) == num_of (m1, v) + (a == v ? 1 : 0) + num_of (m2, v) + (b == v ? 1 : 0) + num_of(m3, v);
+    lemma swap_list_same_elements_alpha : \forall \list<integer> m1, m2, m3, integer a, b;
+        same_elements_list (m1 ^ [| a |] ^ m2 ^ [| b |] ^ m3, m1 ^ [| b |] ^ m2 ^ [| a |] ^ m3);
+    lemma swap_list_same_elements : \forall \list<integer> l1, l2, integer i, j;
+      swap_list (l1, l2, i, j) ==>
+      same_elements_list (l1, l2);
  */
 
-/*@ predicate swap{L1, L2}(int *a, int *b, integer begin, integer i, integer j, integer end) =
+/* predicate swap{L1, L2}(int *a, int *b, integer begin, integer i, integer j, integer end) =
       begin <= i < j < end &&
       \at(a[i], L1) == \at(b[j], L2) &&
       \at(a[i], L2) == \at(b[j], L1) &&
@@ -163,121 +188,121 @@
       same_elements_list2 (a, b, begin, end) ==> same_elements_list (a, b, begin, end);
 */
 
-/*@ requires n >= 0;
-    requires \valid(a+(0..n-1));
-    assigns a[0..n-1];
-    ensures sorted: \forall integer i, j; 0 <= i <= j < n ==> a[i] <= a[j]; // the final array is sorted (proved!)
-    ensures same_elements: same_elements{Pre, Here}(a, a, 0, n); // the array contains the same elements at the end as in the beginning (not proved)
-*/
-void pair_sort(int a[], int n) {
-  int i = 0; // i is running index (inc by 2 every iteration)
-
-  /*@ loop invariant \forall integer k, l; 0 <= k <= l < i ==> a[k] <= a[l]; // the sub-array a[0..i-1] is sorted
-      loop invariant same_elements_list (list_of_array{Pre} (a, n), list_of_array{Here}(a, n), 0, n);
-      //loop invariant same_elements_list (list_of_array{Pre} (a, n), list_of_array{Here}(a, n), i, n);
-      loop invariant 0 <= i <= n;
-      loop assigns i, a[0..n-1];
-      loop variant n - 1 - i;
-  */
-  while (i < n-1) {
-    //@ ghost LC1:
-    int x = a[i];	// let x and y hold the next to elements in A
-    int y = a[i+1];
-    
-    if (x < y) {	// ensure that x is not smaller than y
-        int tmp = x;
-        x = y;
-        y = tmp;
-    }
-    // assert x >= y ==> same_list (list_of_array{LoopCurrent} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i+2);
-    // assert x < y ==> swap_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i, i+1, i+2);
-    // assert a[i] < a[i+1] ==> x == a[i+1] && y == a[i];
-    // assert a[i] < a[i+1] ==> x == \nth (list_of_array{LC1}(a, n), i+1) && y == \nth (list_of_array{LC1}(a, n), i);
-    //@ assert a[i] < a[i+1] ==> same_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, n);
-    // assert a[i] >= a[i+1] ==> x == a[i] && y == a[i+1];
-    //@ assert a[i] >= a[i+1] ==> swap_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i, i+1, n);
-    // assert same_elements_list (list_of_array{LC1} (a, n), list_of_array (a, n), 0, i+2);
-    //@ assert same_elements_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, n);
-    //@ assert same_elements_list (list_of_array{Pre} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, n);
-    int z = a[0];
-    // assert same_elements_list (list_of_array{Pre} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i+2);
-    int j = i - 1;	// j is the index used to find the insertion point
-    /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // the sub-array a[0..j] is sorted
-        loop invariant \forall integer k, l; j+2 < k <= l <= i+1 ==> a[k] <= a[l]; // the sub-array a[j+3..i+1] is sorted
-        loop invariant \forall integer k, l; 0 <= k <= j && j +2 < l <= i+1 ==> a[k] <= a[l]; // every element in a[0..j] is no more then every element in a[j+3..i+1]
-        loop invariant \forall integer k; j+2 < k <= i+1 ==> x < a[k]; // every element in a[j+3..i+1] is more than x
-	//loop invariant \forall integer k; 0 <= k <= j ==> swap{LoopEntry,Here}(a,k,k+2,n);
-	loop invariant same_elements_list (list_of_array{Pre} (a, n), update (update (list_of_array (a, n), j+2, x), j+1, y), 0, n);
-	//loop invariant j < i - 2 ==> same_list{Pre} (a, update (update (list_of_array (a, n), j+1, x), j, y), 0, i);
-        loop invariant -1 <= j <= i - 1;
-        loop assigns a[0..n-1], j;
-	loop variant j;
-    */
-    while (j >= 0 && a[j] > x)	{// find the insertion point for x
-       //@ ghost LC2:
-       a[j+2] = a[j];	// shift existing content by 2
-       //@ assert same_list (update (list_of_array{LC2} (a, n), j+2, \nth(list_of_array{LC2}(a, n), j)), list_of_array (a, n), 0, n);
-       //@ assert swap_list (update (list_of_array{LC2} (a, n), j+2, x), update (list_of_array (a, n), j, x), 0, j, j+2, n);
-       //@ assert swap_list (update (update (list_of_array{LC2} (a, n), j+2, x), j+1, y), update (update (list_of_array (a, n), j, x), j+1, y), 0, j, j+2, n);
-       //@ assert swap_list (update (update (list_of_array (a, n), j, x), j+1, y), update (update (list_of_array (a, n), j+1, x), j, y), 0, j, j+1, n);
-       // assert same_elements_list (list_of_array {Pre} (a, n), update (update (list_of_array (a, n), j, y), j+1, x), 0, j, j+1, n)
-       //list_of_array{LC1} (a, n), update (update (list_of_array (a, n), j+2, x), i, y), 0, i, i+1, n);
-       j = j - 1;
-    }
-
-    //@ ghost L1:
-    a[j+2] = x;	// store x at its insertion place
-    //@ assert same_list (update (list_of_array{L1} (a, n), j+2, x), list_of_array (a, n), 0, n);
-    //@ assert same_list (update (update (list_of_array{L1} (a, n), j+2, x), j+1, y), update (list_of_array (a, n), j+1, y), 0, n);
-	// A[j+1] is an available space now
-
-    /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // the sub-array a[0..j] is sorted
-        loop invariant \forall integer k, l; j+1 < k <= l <= i+1 ==> a[k] <= a[l]; // the sub-array a[j+2..i+1] is sorted
-        loop invariant \forall integer k, l; 0 <= k <= j && j +1 < l <= i+1 ==> a[k] <= a[l]; // every element in a[0..j] is no more then every element in a[j+2..i+1]
-        loop invariant \forall integer k; j+1 < k <= i+1 ==> y <= a[k]; // every element in a[j+2..i+1] is more than x
-	loop invariant same_elements_list (list_of_array{Pre} (a, n), update (list_of_array (a, n), j+1, y), 0, n);
-        loop invariant -1 <= j <= \at(j, LoopEntry); // j varies between -1 and its value at the loop entry
-        loop assigns a[0..n-1], j;
-	loop variant j;
-    */
-    while (j >= 0 && a[j] > y) {	// find the insertion point for y
-        //@ ghost LC3:
-        a[j+1] = a[j];	// shift existing content by 1
-        //@ assert same_list (update (list_of_array{LC3} (a, n), j+1, \nth (list_of_array{LC3} (a, n), j)), list_of_array (a, n), 0, n);
-        //@ assert swap_list (update (list_of_array{LC3} (a, n), j+1, y), update (list_of_array (a, n), j, y), 0, j, j+1, n);
-        j = j - 1;
-    }
-    //@ ghost L2:
-    a[j+1] = y;	// store y at its insertion place
-    //@ assert same_list (update (list_of_array{L2} (a, n), j+1, y), list_of_array (a, n), 0, n);
-    //@ assert same_elements_list (list_of_array{Pre} (a, n), list_of_array (a, n), 0, n);
-
-    i = i+2;
-  }
-  //@ ghost L3:
-  if (i == n-1) {	// if length(A) is odd, an extra
-    int y = a[i];	// single insertion is needed for 
-    int j = i - 1;	// the last element
-    //@ assert same_list (list_of_array{L3} (a, n), update (list_of_array (a, n), j+1, y), 0, n);
-    /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // every element in a[0..j] is more than x
-        loop invariant \forall integer k, l; j+1 < k <= l < n ==> a[k] <= a[l]; // every element in a[j+2..n-1] is more than x
-        loop invariant \forall integer k, l; 0 <= k <= j && j +1 < l < n ==> a[k] <= a[l]; // every element in a[0..j] is no more then every element in a[j+2..n-1]
-        loop invariant \forall integer k; j+1 < k < n ==> y <= a[k]; // every element in a[j+2..n-1] is no less then y
-        loop invariant same_elements_list (list_of_array{Pre} (a, n), update (list_of_array (a, n), j+1, y), 0, n);
-        loop invariant -1 <= j <= i-1;
-        loop assigns a[0..n-1], j;
-	loop variant j;
-    */
-    while (j >= 0 && a[j] > y) {
-        //@ ghost LC4:
-        a[j+1] = a[j];
-        //@ assert swap_list (update (list_of_array{LC4} (a, n), j+1, y), update (list_of_array (a, n), j, y), 0, j, j+1, n);
-        j = j - 1;
-    }
-    //@ ghost L4:
-    a[j+1] = y;
-    //@ assert same_list (update (list_of_array{L4} (a, n), j+1, y), list_of_array (a, n), 0, n);
-  }
-  //@ assert same_elements_list (list_of_array{Pre} (a, n), list_of_array (a, n), 0, n);
-}
-
+///*@ requires n >= 0;
+//    requires \valid(a+(0..n-1));
+//    assigns a[0..n-1];
+//    ensures sorted: \forall integer i, j; 0 <= i <= j < n ==> a[i] <= a[j]; // the final array is sorted (proved!)
+//    ensures same_elements: same_elements{Pre, Here}(a, a, 0, n); // the array contains the same elements at the end as in the beginning (not proved)
+//*/
+//void pair_sort(int a[], int n) {
+//  int i = 0; // i is running index (inc by 2 every iteration)
+//
+//  /*@ loop invariant \forall integer k, l; 0 <= k <= l < i ==> a[k] <= a[l]; // the sub-array a[0..i-1] is sorted
+//      loop invariant same_elements_list (list_of_array{Pre} (a, n), list_of_array{Here}(a, n), 0, n);
+//      //loop invariant same_elements_list (list_of_array{Pre} (a, n), list_of_array{Here}(a, n), i, n);
+//      loop invariant 0 <= i <= n;
+//      loop assigns i, a[0..n-1];
+//      loop variant n - 1 - i;
+//  */
+//  while (i < n-1) {
+//    //@ ghost LC1:
+//    int x = a[i];	// let x and y hold the next to elements in A
+//    int y = a[i+1];
+//    
+//    if (x < y) {	// ensure that x is not smaller than y
+//        int tmp = x;
+//        x = y;
+//        y = tmp;
+//    }
+//    // assert x >= y ==> same_list (list_of_array{LoopCurrent} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i+2);
+//    // assert x < y ==> swap_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i, i+1, i+2);
+//    // assert a[i] < a[i+1] ==> x == a[i+1] && y == a[i];
+//    // assert a[i] < a[i+1] ==> x == \nth (list_of_array{LC1}(a, n), i+1) && y == \nth (list_of_array{LC1}(a, n), i);
+//    //@ assert a[i] < a[i+1] ==> same_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, n);
+//    // assert a[i] >= a[i+1] ==> x == a[i] && y == a[i+1];
+//    //@ assert a[i] >= a[i+1] ==> swap_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i, i+1, n);
+//    // assert same_elements_list (list_of_array{LC1} (a, n), list_of_array (a, n), 0, i+2);
+//    //@ assert same_elements_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, n);
+//    //@ assert same_elements_list (list_of_array{Pre} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, n);
+//    int z = a[0];
+//    // assert same_elements_list (list_of_array{Pre} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i+2);
+//    int j = i - 1;	// j is the index used to find the insertion point
+//    /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // the sub-array a[0..j] is sorted
+//        loop invariant \forall integer k, l; j+2 < k <= l <= i+1 ==> a[k] <= a[l]; // the sub-array a[j+3..i+1] is sorted
+//        loop invariant \forall integer k, l; 0 <= k <= j && j +2 < l <= i+1 ==> a[k] <= a[l]; // every element in a[0..j] is no more then every element in a[j+3..i+1]
+//        loop invariant \forall integer k; j+2 < k <= i+1 ==> x < a[k]; // every element in a[j+3..i+1] is more than x
+//	//loop invariant \forall integer k; 0 <= k <= j ==> swap{LoopEntry,Here}(a,k,k+2,n);
+//	loop invariant same_elements_list (list_of_array{Pre} (a, n), update (update (list_of_array (a, n), j+2, x), j+1, y), 0, n);
+//	//loop invariant j < i - 2 ==> same_list{Pre} (a, update (update (list_of_array (a, n), j+1, x), j, y), 0, i);
+//        loop invariant -1 <= j <= i - 1;
+//        loop assigns a[0..n-1], j;
+//	loop variant j;
+//    */
+//    while (j >= 0 && a[j] > x)	{// find the insertion point for x
+//       //@ ghost LC2:
+//       a[j+2] = a[j];	// shift existing content by 2
+//       //@ assert same_list (update (list_of_array{LC2} (a, n), j+2, \nth(list_of_array{LC2}(a, n), j)), list_of_array (a, n), 0, n);
+//       //@ assert swap_list (update (list_of_array{LC2} (a, n), j+2, x), update (list_of_array (a, n), j, x), 0, j, j+2, n);
+//       //@ assert swap_list (update (update (list_of_array{LC2} (a, n), j+2, x), j+1, y), update (update (list_of_array (a, n), j, x), j+1, y), 0, j, j+2, n);
+//       //@ assert swap_list (update (update (list_of_array (a, n), j, x), j+1, y), update (update (list_of_array (a, n), j+1, x), j, y), 0, j, j+1, n);
+//       // assert same_elements_list (list_of_array {Pre} (a, n), update (update (list_of_array (a, n), j, y), j+1, x), 0, j, j+1, n)
+//       //list_of_array{LC1} (a, n), update (update (list_of_array (a, n), j+2, x), i, y), 0, i, i+1, n);
+//       j = j - 1;
+//    }
+//
+//    //@ ghost L1:
+//    a[j+2] = x;	// store x at its insertion place
+//    //@ assert same_list (update (list_of_array{L1} (a, n), j+2, x), list_of_array (a, n), 0, n);
+//    //@ assert same_list (update (update (list_of_array{L1} (a, n), j+2, x), j+1, y), update (list_of_array (a, n), j+1, y), 0, n);
+//	// A[j+1] is an available space now
+//
+//    /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // the sub-array a[0..j] is sorted
+//        loop invariant \forall integer k, l; j+1 < k <= l <= i+1 ==> a[k] <= a[l]; // the sub-array a[j+2..i+1] is sorted
+//        loop invariant \forall integer k, l; 0 <= k <= j && j +1 < l <= i+1 ==> a[k] <= a[l]; // every element in a[0..j] is no more then every element in a[j+2..i+1]
+//        loop invariant \forall integer k; j+1 < k <= i+1 ==> y <= a[k]; // every element in a[j+2..i+1] is more than x
+//	loop invariant same_elements_list (list_of_array{Pre} (a, n), update (list_of_array (a, n), j+1, y), 0, n);
+//        loop invariant -1 <= j <= \at(j, LoopEntry); // j varies between -1 and its value at the loop entry
+//        loop assigns a[0..n-1], j;
+//	loop variant j;
+//    */
+//    while (j >= 0 && a[j] > y) {	// find the insertion point for y
+//        //@ ghost LC3:
+//        a[j+1] = a[j];	// shift existing content by 1
+//        //@ assert same_list (update (list_of_array{LC3} (a, n), j+1, \nth (list_of_array{LC3} (a, n), j)), list_of_array (a, n), 0, n);
+//        //@ assert swap_list (update (list_of_array{LC3} (a, n), j+1, y), update (list_of_array (a, n), j, y), 0, j, j+1, n);
+//        j = j - 1;
+//    }
+//    //@ ghost L2:
+//    a[j+1] = y;	// store y at its insertion place
+//    //@ assert same_list (update (list_of_array{L2} (a, n), j+1, y), list_of_array (a, n), 0, n);
+//    //@ assert same_elements_list (list_of_array{Pre} (a, n), list_of_array (a, n), 0, n);
+//
+//    i = i+2;
+//  }
+//  //@ ghost L3:
+//  if (i == n-1) {	// if length(A) is odd, an extra
+//    int y = a[i];	// single insertion is needed for 
+//    int j = i - 1;	// the last element
+//    //@ assert same_list (list_of_array{L3} (a, n), update (list_of_array (a, n), j+1, y), 0, n);
+//    /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // every element in a[0..j] is more than x
+//        loop invariant \forall integer k, l; j+1 < k <= l < n ==> a[k] <= a[l]; // every element in a[j+2..n-1] is more than x
+//        loop invariant \forall integer k, l; 0 <= k <= j && j +1 < l < n ==> a[k] <= a[l]; // every element in a[0..j] is no more then every element in a[j+2..n-1]
+//        loop invariant \forall integer k; j+1 < k < n ==> y <= a[k]; // every element in a[j+2..n-1] is no less then y
+//        loop invariant same_elements_list (list_of_array{Pre} (a, n), update (list_of_array (a, n), j+1, y), 0, n);
+//        loop invariant -1 <= j <= i-1;
+//        loop assigns a[0..n-1], j;
+//	loop variant j;
+//    */
+//    while (j >= 0 && a[j] > y) {
+//        //@ ghost LC4:
+//        a[j+1] = a[j];
+//        //@ assert swap_list (update (list_of_array{LC4} (a, n), j+1, y), update (list_of_array (a, n), j, y), 0, j, j+1, n);
+//        j = j - 1;
+//    }
+//    //@ ghost L4:
+//    a[j+1] = y;
+//    //@ assert same_list (update (list_of_array{L4} (a, n), j+1, y), list_of_array (a, n), 0, n);
+//  }
+//  //@ assert same_elements_list (list_of_array{Pre} (a, n), list_of_array (a, n), 0, n);
+//}
+//
