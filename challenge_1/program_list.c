@@ -79,6 +79,9 @@
         num_of (l1 ^ l2, value) == num_of (l1, value) + num_of (l2, value);
       lemma num_of_cons : \forall \list<integer> l1, integer x, integer value;
         num_of (\Cons (x, l1), value) == (x == value ? 1 + num_of (l1, value) : num_of (l1, value));
+      lemma num_of_non_zero : \forall \list<integer> l, integer value;
+        num_of (l, value) > 0 ==>
+        \exists integer k; 0 <= k < \length (l) && \nth (l, k) == value;
     }
 
     predicate same_elements_list (\list<integer> l1, \list<integer> l2) =
@@ -119,9 +122,9 @@
       swap_list (l1, l2, i, j) ==>
       same_elements_list (l1, l2);
     lemma update_swap_list : \forall \list<integer> l1, l2, integer i, j;
-      0 <= i < j <= \length (l1) ==>
+      0 <= i < j < \length (l1) ==>
       l2 == update (l1, j, \nth (l1, i)) ==>
-      swap_list (l1, update (l2, i, \nth (l2, j)), i, j);
+      swap_list (l1, update (l2, i, \nth (l1, j)), i, j);
  */
 
 /*@ predicate swap{L1, L2}(int *a, int *b, integer begin, integer i, integer j, integer end) =
@@ -151,7 +154,7 @@
 
 /*@ predicate same_array_list{L} (int* a, \list<integer> b, integer begin, integer end) =
       \forall integer k; begin <= k < end ==> a[k] == \nth (b, k);
-    lemma same_elements_list_array{L1,L2} : \forall int* a, integer n;
+    lemma same_elements_list_array{L1,L2} : \forall int* a, integer n; 0 <= n ==>
       same_elements_list(list_of_array{L1}(a, n), list_of_array{L2}(a, n)) ==>
       same_elements{L1,L2} (a, a, 0, n);
 */
@@ -217,7 +220,7 @@ void pair_sort(int a[], int n) {
     // assert x < y ==> swap_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), 0, i, i+1, i+2);
     // assert a[i] < a[i+1] ==> x == a[i+1] && y == a[i];
     // assert a[i] < a[i+1] ==> x == \nth (list_of_array{LC1}(a, n), i+1) && y == \nth (list_of_array{LC1}(a, n), i);
-    //@ assert a[i] < a[i+1] ==> list_of_array{LC1} (a, n) == update (update (list_of_array (a, n), i+1, x), i, y);
+    //@ assert \length (list_of_array(a, n)) >= 0 ==> a[i] < a[i+1] ==> list_of_array{LC1} (a, n) == update (update (list_of_array (a, n), i+1, x), i, y);
     // assert a[i] >= a[i+1] ==> x == a[i] && y == a[i+1];
     //@ assert a[i] >= a[i+1] ==> swap_list (list_of_array{LC1} (a, n), update (update (list_of_array (a, n), i+1, x), i, y), i, i+1);
     // assert same_elements_list (list_of_array{LC1} (a, n), list_of_array (a, n), 0, i+2);
@@ -284,7 +287,7 @@ void pair_sort(int a[], int n) {
   if (i == n-1) {	// if length(A) is odd, an extra
     int y = a[i];	// single insertion is needed for 
     int j = i - 1;	// the last element
-    //@ assert list_of_array{L3} (a, n) == update (list_of_array (a, n), j+1, y);
+    //@ assert \length (list_of_array (a, n)) >= 0 ==> list_of_array{L3} (a, n) == update (list_of_array (a, n), j+1, y);
     /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // every element in a[0..j] is more than x
         loop invariant \forall integer k, l; j+1 < k <= l < n ==> a[k] <= a[l]; // every element in a[j+2..n-1] is more than x
         loop invariant \forall integer k, l; 0 <= k <= j && j +1 < l < n ==> a[k] <= a[l]; // every element in a[0..j] is no more then every element in a[j+2..n-1]
@@ -302,7 +305,7 @@ void pair_sort(int a[], int n) {
     }
     //@ ghost L4:
     a[j+1] = y;
-    //@ assert update (list_of_array{L4} (a, n), j+1, y) == list_of_array (a, n);
+    //@ assert \length (list_of_array(a, n)) >= 0 ==> update (list_of_array{L4} (a, n), j+1, y) == list_of_array (a, n);
   }
   //@ assert same_elements_list (list_of_array{Pre} (a, n), list_of_array (a, n));
 }
