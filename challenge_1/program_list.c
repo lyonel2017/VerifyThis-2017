@@ -42,6 +42,9 @@
         sub_list (l, begin, end) == (sub_list (l, begin, i) ^ [| \nth (l, i) |] ^ sub_list (l, i+1, j) ^ [| \nth (l, j) |] ^ sub_list (l, j+1, end));
     }
 
+    lemma list_split : \forall \list<integer> l;
+      l == \Nil || \exists integer x, \list<integer> l1; l == \Cons (x, l1);
+
     axiomatic update {
       logic \list<integer> update (\list<integer> l, integer n, integer v);
       axiom update_zero : \forall \list<integer> l, integer v;
@@ -70,15 +73,14 @@
       axiom num_of_zero : \forall integer value;
         num_of ([| |], value) == 0;
       axiom num_of_pos_eq : \forall \list<integer> l, integer value;
-        0 < \length(l) ==> \nth (l, 0) == value ==>
-        num_of(l, value) == 1 + num_of (tail(l), value);
-      axiom num_of_pos_neq : \forall \list<integer> l, integer value;
-        0 < \length(l) ==> \nth (l, 0) != value ==>
-        num_of (l, value) == num_of (tail(l), value);
+        num_of(\Cons (value, l), value) == 1 + num_of (l, value);
+      axiom num_of_pos_neq : \forall \list<integer> l, integer x, value;
+        x != value ==>
+        num_of (\Cons (x, l), value) == num_of (l, value);
       lemma num_of_split : \forall \list<integer> l1, l2, integer value;
         num_of (l1 ^ l2, value) == num_of (l1, value) + num_of (l2, value);
-      lemma num_of_cons : \forall \list<integer> l1, integer x, integer value;
-        num_of (\Cons (x, l1), value) == (x == value ? 1 + num_of (l1, value) : num_of (l1, value));
+      //lemma num_of_cons : \forall \list<integer> l1, integer x, integer value;
+      //  num_of (\Cons (x, l1), value) == (x == value ? 1 + num_of (l1, value) : num_of (l1, value));
       lemma num_of_non_zero : \forall \list<integer> l, integer value;
         num_of (l, value) > 0 ==>
         \exists integer k; 0 <= k < \length (l) && \nth (l, k) == value;
@@ -257,6 +259,7 @@ void pair_sort(int a[], int n) {
     //@ ghost L1:
     a[j+2] = x;	// store x at its insertion place
     //@ assert update (list_of_array{L1} (a, n), j+2, x) == list_of_array (a, n);
+    //@ assert list_of_array{L1} (a, n) == update (list_of_array(a, n),j,x); 
     //@ assert update (update (list_of_array{L1} (a, n), j+2, x), j+1, y) == update (list_of_array (a, n), j+1, y);
 	// A[j+1] is an available space now
 
