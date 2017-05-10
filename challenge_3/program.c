@@ -31,12 +31,29 @@
     ensures same_elements{Pre, Here}(list, n);
     assigns list[i],list[j];
 */
-void swap (int list[], int i, int j,int n) {
+void swap (int list[], int i, int j,int n){
   int temp = list[i];
   list[i] = list[j];
   list[j] = temp;
   /*@ assert swap{Pre, Here}(list, i, j, n);*/
 }
+
+/*@ predicate paire(integer i) = i%2;*/
+/*@ predicate impaire(integer i) = !(i%2);*/
+
+/*@ axiomatic Sum_paire {
+  @   logic integer sum{L}(integer i, integer j)
+  @        reads t[..] ;
+  @   axiom sum1{L} :
+  @     \forall integer i, j; i >= j ==> sum(t,i,j) == 0;
+  @   axiom sum2{L} :
+  @     \forall integer i, j; i < j && paire(j)==>
+  @       sum(t,i,j) == sum(t,i,j-1) + 1;
+  @   axiom sum3{L} :
+  @     \forall integer i, j; i < j && !paire(j)==>
+  @       sum(t,i,j) == sum(t,i,j-1) + 0;
+  @ }
+  @*/
 
 /*@ requires n >= 0;
     requires \valid(list+(0..n-1));
@@ -52,10 +69,12 @@ void oddEvenSort (int list[], int n) {
   */
   while(!sorted) {
     sorted=1;
+    /*@ gost int p = 0;*/
     /*@ loop invariant 0 <= sorted <= 1;
       @ loop invariant 1 <= i <= n+1; 
       @ loop invariant same_elements{Pre, Here}(list, n);
-      @ loop assigns i, list[0..n-1], sorted;
+      @ loop invariant \forall integer k; 1 <= k <= p  ==> list(k) >= list(k+1)
+      @ loop assigns i, list[0..n-1], sorted,p;
       @ loop variant n - i;
     */
     for(int i = 1; i < n-1; i+=2) {
@@ -63,6 +82,7 @@ void oddEvenSort (int list[], int n) {
         swap(list, i, i+1,n);
         sorted = 0;
       }
+    /*@ ghost int p = i;*/
     }
     /*@ loop invariant 0 <= sorted <= 1;
       @ loop invariant 0 <= i <= n;
