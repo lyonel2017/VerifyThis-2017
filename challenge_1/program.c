@@ -12,6 +12,10 @@
         \at(a[k], L1) == \at(a[k], L2);
 */
 
+/*@ predicate same{L1,L2}(int* a, int* b, integer length) = 
+       \forall integer i; 0 <= i < length ==> \at(a[i],L1) == \at(b[i],L2); 
+*/
+
 /*@ inductive same_elements{L1, L2}(int* a, integer length) {
       case refl{L}:
         \forall int* a, integer length; same_elements{L, L}(a, length);
@@ -20,16 +24,23 @@
       case trans{L1, L2, L3}: \forall int* a, integer length;
         same_elements{L1, L2}(a, length) ==>
         same_elements{L2, L3}(a, length) ==>
-        same_elements{L1, L3}(a, length); 
+        same_elements{L1, L3}(a, length);
+      case same{L1,L2}: \forall int*a, integer length; 
+        same{L1,L2}(a,a,length) ==> same_elements{L1,L2}(a,length);
     }
 */
 
 /*@ axiomatic Same{
-      axiom same{L1,L2}: \forall integer i,n, int*a ; 
-      \at(a[i],L1) == \at(a[i],L2) && 0 <= i < n ==> same_elements{L1,L2}(a,n);
+      lemma same{L1,L2}: \forall integer n, int*a ; 
+      (\forall integer i;  0 <= i < n && \at(a[i],L1) == \at(a[i],L2)) ==> same_elements{L1,L2}(a,n);
+    
+      lemma same_dual{L1,L2}: \forall integer n, int *a,*b ; 
+      (\forall integer i; 0 <= i < n && \at(a[i],L1) == \at(b[i],L1) && \at(a[i],L2) == \at(b[i],L2)) && same_elements{L1,L2}(b,n) ==> same_elements{L1,L2}(a,n);
 
-      axiom same_dual{L1,L2}: \forall integer n, int *a,*b ; 
-      (\forall integer i; 0 <= i < n ==> \at(a[i],L1) == \at(b[i],L1) && \at(a[i],L2) == \at(b[i],L2)) && same_elements{L1,L2}(b,n) ==> same_elements{L1,L2}(a,n);
+      lemma same_dual_beta{L1,L2}: \forall integer n, int *a,*b ; 
+      (\forall integer i; 0 <= i < n && \at(a[i],L1) == \at(b[i],L1)) && 
+      (\forall integer j; 0 <= j < n && \at(a[j],L2) == \at(b[j],L2)) && 
+       same_elements{L1,L2}(b,n) ==> same_elements{L1,L2}(a,n);
 
 }*/
 
@@ -42,8 +53,8 @@
     requires \valid(a+(0..n-1));
     assigns a[0..n-1],t[0..n-1];
     ensures sorted: \forall integer i, j; 0 <= i <= j < n ==> a[i] <= a[j]; // the final array is sorted (proved!)
-    ensures same_elements{Pre, Post}(t, n);
     ensures \forall integer k; 0 <= k < n ==> a[k] == t[k];
+    ensures same_elements{Pre, Post}(t, n);
     ensures same_elements{Pre, Post}(a, n); // the array contains the same elements at the end as in the beginning (not proved)
 */
 void pair_sort(int a[], int n) {
