@@ -7,7 +7,7 @@
 /*@ predicate swap{L1, L2}(int *a, int *b, integer begin, integer i, integer j, integer end) =
       begin <= i < j < end &&
       \at(a[i], L1) == \at(b[j], L2) &&
-      \at(a[i], L2) == \at(b[j], L1) &&
+      \at(a[j], L1) == \at(b[i], L2) &&
       \forall integer k; begin <= k < end && k != i && k != j ==>
         \at(a[k], L1) == \at(b[k], L2);
 
