@@ -1,9 +1,7 @@
-Pour pouvoir discuter avec Loïc, j'ai créé un projet sur gitlab (verify-this).
+# About VerifyThis
 
-# About VerifyThis 2017
-
-VerifyThis 2017 is a program verification competition taking place as part of the European Joint Conferences on Theory 
-and Practice of Software (ETAPS 2017) on April 22-23, 2017 in Uppsala, Sweden. It is the 6th event in the VerifyThis competition series.
+VerifyThis is a program verification competition taking place as part of the European Joint Conferences on Theory 
+and Practice of Software (ETAPS).
 
 The aims of the competition are:
 
@@ -18,4 +16,4 @@ will have the input-output behavior of programs in focus. Solutions will be judg
 
 # About this project
 
-This project exist for the traning with Frama-C for the participation to VerifyThis 2017. 
+This project exist for the traning with Frama-C for the participation to VerifyThis.
