@@ -33,14 +33,14 @@
 
 /*@ requires \valid(t+(0..n-1));
     requires \separated(t+(0..n-1),a+(0..n-1));
-    requires same_array{Pre, Pre}(a, t, 0, n);//\forall integer k; 0 <= k < n ==> a[k] == t[k];
+    requires same_array{Pre, Pre}(a, t, 0, n);
     requires n >= 0;
     requires \valid(a+(0..n-1));
     assigns a[0..n-1],t[0..n-1];
-    ensures sorted: \forall integer i, j; 0 <= i <= j < n ==> a[i] <= a[j]; // the final array is sorted (proved!)
+    ensures sorted: \forall integer i, j; 0 <= i <= j < n ==> a[i] <= a[j]; // the final array is sorted
     ensures \forall integer k; 0 <= k < n ==> a[k] == t[k];
     ensures same_elements{Pre, Post}(t, t, 0, n);
-    ensures same_elements{Pre, Post}(a, a, 0, n); // the array contains the same elements at the end as in the beginning (not proved)
+    ensures same_elements{Pre, Post}(a, a, 0, n); // the array contains the same elements at the end as in the beginning
 */
 void pair_sort(int a[], int n) {
   int i = 0; // i is running index (inc by 2 every iteration)
@@ -53,11 +53,11 @@ void pair_sort(int a[], int n) {
       loop variant n - 1 - i;
   */
   while (i < n-1) {
-    int x = a[i];	
+    int x = a[i];
     // let x and y hold the next to elements in A
     int y = a[i+1];
-    
-    if (x < y) {	
+
+    if (x < y) {
       // ensure that x is not smaller than y
         int tmp = x;
         x = y;
@@ -93,18 +93,18 @@ void pair_sort(int a[], int n) {
     /*@ assert \forall integer k; j+3 <= k < n ==> a[k] == t[k];*/
     /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/
     /*@ assert (t[j+1] == x && t[j+2] == y) || (t[j+1] == y && t[j+2] == x);*/
-    a[j+2] = x;	
-    /*@ assert same_elements{Test, Here}(t, t, 0, n);*/    
-    /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/    
+    a[j+2] = x;
+    /*@ assert same_elements{Test, Here}(t, t, 0, n);*/
+    /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/
     /*@ assert \forall integer k; j+3 <= k < n ==> a[k] == t[k];*/
     /*@ ghost if(t[j+2] == y){t[j+2] = x;t[j+1] = y;} else {} ;*/
     /*@ assert \at(t[j+2],Test) == y ==> swap{Test,Here}(t,t, 0,j+1,j+2,n);*/
     /*@ assert \at(t[j+2],Test) != y ==>  (\forall integer k; 0 <= k < n ==>  \at(t[k],Here) == \at(t[k],Test));*/
-    /*@ assert t[j+2] == x && t[j+1] == y;*/  
-    /*@ assert same_elements{Test, Here}(t, t, 0, n);*/    
+    /*@ assert t[j+2] == x && t[j+1] == y;*/
+    /*@ assert same_elements{Test, Here}(t, t, 0, n);*/
     /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/
     /*@ assert \forall integer k; j+2 <= k < n ==> a[k] == t[k];*/
-      
+
     // store x at its insertion place
     // A[j+1] is an available space now
     /*@ assert \at(j,Here) == \at(j,Test);*/
@@ -121,7 +121,7 @@ void pair_sort(int a[], int n) {
 	loop assigns a[0..n-1],j,t[0..n-1];
 	loop variant j;
     */
-    while (j >= 0 && a[j] > y) {	
+    while (j >= 0 && a[j] > y) {
       // find the insertion point for y
       /*@ ghost L2:;*/
       a[j+1] = a[j];
@@ -137,16 +137,16 @@ void pair_sort(int a[], int n) {
     /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/
     /*@ assert t[j+1] == y;*/
     a[j+1] = y;	// store y at its insertion place
-    /*@ assert same_elements{Test2, Here}(t, t, 0, n);*/    
+    /*@ assert same_elements{Test2, Here}(t, t, 0, n);*/
     /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/
     /*@ assert \forall integer k; j+1 <= k < n ==> a[k] == t[k];*/
   i = i+2;
   }
-  if (i == n-1) {	
+  if (i == n-1) {
     // if length(A) is odd, an extra
-    int y = a[i];	
-    // single insertion is needed for 
-    int j = i - 1;	
+    int y = a[i];
+    // single insertion is needed for
+    int j = i - 1;
     // the last element
     /*@ loop invariant \forall integer k, l; 0 <= k <= l <= j ==> a[k] <= a[l]; // every element in a[0..j] is more than x
         loop invariant \forall integer k, l; j+1 < k <= l < n ==> a[k] <= a[l]; // every element in a[j+2..n-1] is more than x
@@ -167,7 +167,7 @@ void pair_sort(int a[], int n) {
       /*@ ghost int temp = t[j];*/
       /*@ ghost t[j] = t[j+1];*/
       /*@ ghost t[j+1] = temp;*/
-      /*@ assert swap{L3, Here}(t, t, 0, j, j+1, n);*/        
+      /*@ assert swap{L3, Here}(t, t, 0, j, j+1, n);*/
       j = j - 1;
     }
     /*@ ghost Test3:;*/
@@ -175,7 +175,7 @@ void pair_sort(int a[], int n) {
     /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/
     /*@ assert t[j+1] == y;*/
     a[j+1] = y;
-    /*@ assert same_elements{Test3, Here}(t, t, 0, n);*/    
+    /*@ assert same_elements{Test3, Here}(t, t, 0, n);*/
     /*@ assert same_elements{Pre, Here}(t, t, 0, n);*/
     /*@ assert \forall integer k; j+1 <= k < n ==> a[k] == t[k];*/
   }
@@ -184,4 +184,3 @@ void pair_sort(int a[], int n) {
   //@ assert same_array{Here, Here}(t, a, 0, n);
   //@ assert same_elements{Pre, Here}(a, a, 0, n);
 }
-
