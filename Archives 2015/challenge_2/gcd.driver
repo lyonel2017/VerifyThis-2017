@@ -1,0 +1,4 @@
+library gcd_int:
+why3.import += "number.Gcd";
+logic int GCD (int, int) = commutative:
+      {coq="gcd";altergo="gcd";why3="gcd"};
