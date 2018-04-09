@@ -15,6 +15,7 @@ TAGS
 .DS_Store
 *.tmp
 /.git_version
+*~
 frama_c_journal.ml
 
 #build
@@ -29,5 +30,5 @@ autom4te.cache
 /.Makefile.user
 /ocamlgraph/
 META.*
-/gui/
-
+*.script
+*.frama-c*
