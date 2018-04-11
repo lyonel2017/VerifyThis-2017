@@ -1,0 +1,70 @@
+Longest Common Prefix (LCP) - 45 minutes
+
+VERIFICATION TASK
+-----------------
+
+Longest Common Prefix (LCP) is an algorithm used for text querying. In
+the following, we model text as an integer array. You may use other
+representations (e.g., Java Strings), if your system supports them.
+
+LCP can be implemented with the pseudocode given below. Formalize and
+verify the following informal specification for LCP.
+
+Input:  an integer array a, and two indices x and y into this array
+Output: length of the longest common prefix of the subarrays of a
+        starting at x and y respectively.
+
+Pseudocode:
+
+    int lcp(int[] a, int x, int y) {
+        int l = 0;
+        while (x+l<a.length && y+l<a.length && a[x+l]==a[y+l]) {
+            l++;
+        }
+        return l;
+    }
+
+
+
+
+
+
+ADVANCED 
+========
+
+
+
+BACKGROUND
+----------
+
+Together with a suffix array, LCP can be used to solve interesting text
+problems, such as finding the longest repeated substring (LRS) in a text.
+
+A suffix array (for a given text) is an array of all suffixes of the
+text. For the text [7,8,8,6], the suffix array is
+[[7,8,8,6],
+   [8,8,6],
+     [8,6],
+       [6]]
+
+Typically, the suffixes are not stored explicitly as above but
+represented as pointers into the original text. The suffixes in a suffix
+array  are sorted in lexicographical order. This way, occurrences of
+repeated substrings in the original text are neighbors in the suffix
+array. 
+
+For the above, example (assuming pointers are 0-based integers), the
+sorted suffix array is:
+
+[3,0,2,1]
+
+
+VERIFICATION TASK
+-----------------
+
+The attached Java code contains an implementation of a suffix array
+(SuffixArray.java), consisting essentially of a lexicographical
+comparison on arrays, a sorting routine, and LCP.
+
+The client code (LRS.java) uses these to solve the LRS problem. Verify
+that it does so correctly.

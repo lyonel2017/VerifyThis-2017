@@ -1,0 +1,65 @@
+Prefix sum - 90 min
+
+BACKGROUND
+----------
+
+The concept of a prefix sum is very simple. Given an integer array a,
+store in each cell a[i] the value a[0]+...+a[i-1].
+
+Example. The prefix sum of the array
+
+[3, 1, 7, 0, 4, 1, 6, 3]
+
+is
+
+[0, 3, 4, 11, 11, 15, 16, 22].
+
+
+Prefix sums have important applications in parallel vector programming,
+where the workload of calculating the sum is distributed over several
+processes. We will verify a sequential version of such an algorithm.
+
+ALGORITHM DESCRIPTION
+---------------------
+
+We assume that the length of the array is a power of two. This allows us
+to identify the array initially with the leaves of a complete binary
+tree. The computation proceeds along this tree in two phases: upsweep
+and downsweep.
+
+
+During the upsweeep, which itself proceeds in phases, the sum of the
+children nodes is propagated to the parent nodes along the tree. A part
+of the array is overwritten with values stored in the inner nodes of the
+tree in this process (see diagram in the accompanying PDF). After the
+upsweep, the rightmost array cell is identified with the root of the
+tree.
+
+As preparation for the downsweep, a zero is inserted in the rightmost
+cell.
+
+Then, in each step, each node at the current level passes to its left
+child its own value, and it passes to its right child, the sum of the
+left child from the upsweep phase and its own value (see diagram in the
+accompanying PDF).
+
+
+VERIFICATION TASKS
+------------------
+
+We provide an interative and a recursive implementation of the
+algorithm. You may choose one of these to your liking.
+
+1. Specify and verify the upsweep method. You can begin with a slightly
+   simpler requirement that the last array cell contains the sum of the
+   whole array in the post-state.
+2. Verify both upsweep AND downsweep - prove that the array cells
+   contain appropriate prefix sums in the post-state.
+
+If a general specification is not possible with your tool, assume the
+length of array is 8. 
+
+
+
+(The organizers acknowledge Nathan Wong for the slides.)
+

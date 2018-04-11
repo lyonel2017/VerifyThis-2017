@@ -1,0 +1,3 @@
+library power:
+why3.import += "int.Power";
+logic integer POWER (integer, integer) = {coq="power";altergo="power";why3="power"};
