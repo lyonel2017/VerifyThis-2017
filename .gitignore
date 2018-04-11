@@ -31,4 +31,5 @@ autom4te.cache
 /ocamlgraph/
 META.*
 *.script
+*.script.back
 *.frama-c*
