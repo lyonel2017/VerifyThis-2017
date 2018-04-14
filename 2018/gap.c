@@ -8,7 +8,8 @@ int l, r, n;
 }
 */
 
-/*@ ensures \forall integer i; 0 <= i < n - (r - l) ==> nth(i) == \at(nth(i), Pre);
+/*@ requires 0 <= l <= r < n;
+     ensures \forall integer i; 0 <= i < n - (r - l) ==> nth(i) == \at(nth(i), Pre);
  */
 void left()
 {
