@@ -1,6 +1,4 @@
-#define MAX 1000
-
-char a[MAX];
+char a[1000];
 int l, r, n;
 int const K;
 // global invariant K_is_positive: K > 0 ;
@@ -47,10 +45,10 @@ void grow()
 {
   n = n + K;
 
-  /*@ loop invariant r + K - 1 <= i <= n - 1;
+  /*@ loop invariant r + K - 1 <= i <= n - 1 ;
       loop invariant \forall integer j; 0 <= j <= i ==> a[j] == \at(a[j], LoopEntry);
       loop invariant \forall integer j; i < j < n ==> a[j] == \at(a[j-K], LoopEntry);
-      loop assigns i, a[r+K..n+K-1];
+      loop assigns i, a[r+K..n-1];
   */
   for (int i = n-1; i >= r+K; i--) {
     a[i] = a[i - K];
@@ -58,7 +56,7 @@ void grow()
   r = r + K;
 }
 
-/*@ requires 0 <= l <= r < n;
+/*@ requires 0 <= l <= r < n <= 800;
     requires r + K < n;
     requires K > 0;
     ensures \forall integer i; 0 <= i < \old(l) ==> nth(i) == \old(nth(i));
