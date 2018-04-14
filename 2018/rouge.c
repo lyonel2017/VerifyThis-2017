@@ -40,7 +40,8 @@ int counting ()
   for(int n = 4; n <= 50; n++) {
     count[n] = count[n-1];
     /*@ loop invariant 3 <= k <= n;
-        loop invariant count[n] == \at(count[n], LoopEntry) + sum(&count[0], n-k, n-4);
+        loop invariant \forall integer i; 0 <= i < n ==> count[i] == \at(count[i],LoopEntry);
+        loop invariant count[n] == \at(count[n], LoopEntry) + sum(count+0, n-k, n-4);
         loop assigns k, count[n];
         loop variant n-k;
     */
