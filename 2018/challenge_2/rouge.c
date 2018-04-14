@@ -18,11 +18,11 @@
   @*/
 
 /*@ axiomatic count {
-    logic integer card (set<\list<boolean> > s);
-    logic set<\list<boolean> > enumerate (integer n);
+    logic integer CARD (set<\list<boolean> > s);
+    logic set<\list<boolean> > ENUMERATE (integer n);
 } */
 
-/*@ ensures \result== card(enumerate (50));
+/*@ ensures \result== CARD(ENUMERATE (50));
     assigns \nothing;
  */
 int counting ()
@@ -33,7 +33,7 @@ int counting ()
   count[2] = 1;
   count[3] = 2;
   /*@ loop invariant 4 <= n <= 51;
-      loop invariant \forall integer i; 0 <= i < n ==> count[i] == card(enumerate(i));
+      loop invariant \forall integer i; 0 <= i < n ==> count[i] == CARD(ENUMERATE(i));
       loop assigns n, count[0..50];
       loop variant 50-n;
   */

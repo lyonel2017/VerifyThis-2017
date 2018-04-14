@@ -1,6 +1,7 @@
 library gcd_int:
 coq.file += "valid.v";
-logic integer CARD (set<\list<boolean> > s) =
+coq.file += "Bool.v";
+logic integer CARD (A) =
       {coq="card";altergo="gcd";why3="gcd"};
-logic set<\list<boolean> > ENUMERATE (integer n) =
-      {coq="enumerat";altergo="enumerate";why3="enumerate"};
+logic A ENUMERATE (integer n) =
+      {coq="enumerate";altergo="enumerate";why3="enumerate"};
