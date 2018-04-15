@@ -1,5 +1,8 @@
-Require Import List. Import ListNotations.
-Require Import Arith. Require Import Bool.
+Require Import List. 
+Import ListNotations.
+Require Import Arith.
+Require Import ZArith.
+Import Bool.
 Require Import ListSet.
 
 (* red = true; black = false *)
@@ -15,13 +18,13 @@ Definition set_filter {A} : (A -> bool) -> set A -> set A := List.filter (A:=A).
 
 Fixpoint enumerate_all n : set (list bool) :=
   match n with
-  | 0 => empty_set (list bool)
+  | 0 => set_add (list_eq_dec bool_dec) [] (empty_set _)
   | S n => let s := enumerate_all n in
            set_union (list_eq_dec bool_dec)
              (set_map (list_eq_dec bool_dec) (fun l => true::l) s)
              (set_map (list_eq_dec bool_dec) (fun l => false::l) s)
   end.
 
-Definition enumerate n := set_filter valid (enumerate_all n).
+Definition filter n := set_filter valid (enumerate_all (Z.to_nat n)).
 
-Definition card := List.length.
+Definition card {A} s:= Z.of_nat(List.length (A:=A) s).

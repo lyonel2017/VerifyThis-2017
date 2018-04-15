@@ -1,7 +1,6 @@
 library gcd_int:
-coq.file += "valid.v";
-coq.file += "Bool.v";
+coq.file += "Valid.v";
 logic integer CARD (A) =
       {coq="card";altergo="gcd";why3="gcd"};
-logic A ENUMERATE (integer n) =
-      {coq="enumerate";altergo="enumerate";why3="enumerate"};
+logic A FILTER (integer) =
+      {coq="filter";altergo="filter";why3="filter"};
