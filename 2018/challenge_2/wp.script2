@@ -53,6 +53,14 @@ Qed.
 Goal typed_rouge_counting_loop_inv_main_outer_preserved.
 Hint counting,main_outer,preserved.
 Proof.
+  (* repeat match goal with
+  | |- ?H -> _ =>
+     match H with
+     | is_sint32 (1+_) => intros _
+     | _ => intros ?
+     end
+  | |- _ => intro
+  end. *)
   intros. assert (i_1= i) by omega. subst i_1.
   assert (i_2 < i \/ i_2 = i) by omega.
   destruct H14.
