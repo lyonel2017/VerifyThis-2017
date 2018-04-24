@@ -22,7 +22,7 @@
     logic set<\list<boolean> > FILTER (integer i);  //{ x | x in U and p x}
 } */
 
-/*@ ensures \result== CARD(FILTER (50));
+/*@ ensures main_post : \result== CARD(FILTER (50));
     assigns \nothing;
  */
 int counting ()
@@ -33,15 +33,14 @@ int counting ()
   count[2] = 1;
   count[3] = 2;
   /*@ loop invariant 4 <= n <= 51;
-      loop invariant \forall integer i; 0 <= i < n ==> count[i] == CARD(FILTER(i));
+      loop invariant main_outer : \forall integer i; 0 <= i < n ==> count[i] == CARD(FILTER(i));
       loop assigns n, count[0..50];
       loop variant 50-n;
   */
   for(int n = 4; n <= 50; n++) {
     count[n] = count[n-1];
-    /*@ loop invariant 3 <= k <= n;
-        loop invariant \forall integer i; 0 <= i < n ==> count[i] == \at(count[i],LoopEntry);
-        loop invariant count[n] == \at(count[n], LoopEntry) + sum(count+0, n-k, n-4);
+    /*@ loop invariant bounds : 3 <= k <= n;
+        loop invariant main_inner : count[n] == \at(count[n], LoopEntry) + sum{LoopEntry}(count+0, n-k, n-3);
         loop assigns k, count[n];
         loop variant n-k;
     */
