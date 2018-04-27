@@ -33,3 +33,4 @@ META.*
 *.script
 *.script.back
 *.frama-c*
+*.out
