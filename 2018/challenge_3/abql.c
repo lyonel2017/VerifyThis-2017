@@ -10,7 +10,7 @@ int data = 0;
   @ ensures pass[0] == \true;
   @ assigns pass[0..2] next;*/
 void abql_int(){
-  /*@ loop invariant \forall int x; 0 <= x < i ==> pass[x] == \false;
+  /*@ loop invariant \forall int x; 1 <= x < i ==> pass[x] == \false;
     @ loop invariant n - i;*/
   for(int i = 1; i < n; i++){
     pass[i] = false
