@@ -1,6 +1,8 @@
 library gcd_int:
 coq.file += "Valid.v";
+why3.file += "rouge.wly";
+
 logic integer CARD (A) =
-      {coq="card";altergo="gcd";why3="gcd"};
+      {coq="card";altergo="TODO";why3="card"};
 logic A FILTER (integer) =
-      {coq="filter";altergo="filter";why3="filter"};
+      {coq="filter";altergo="TODO";why3="filter"};
