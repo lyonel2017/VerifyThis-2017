@@ -1,7 +1,6 @@
 /*
  ============================================================================
  Name        : Even.c
- Author      : Lionel Blatter
  Version     : 0.0.1
  Description : By considering the terms in the Fibonacci sequence less then four million, find the sum of the even-valued term
  ============================================================================

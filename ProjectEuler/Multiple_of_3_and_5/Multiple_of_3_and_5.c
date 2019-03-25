@@ -1,7 +1,6 @@
 /*
  ============================================================================
  Name        : Multiple.c
- Author      : Lionel Blatter
  Version     : 0.0.1
  Description : Find the sum of all multiples of 3 and 5 below 1000
  ============================================================================
