@@ -3,7 +3,12 @@
 ###########
 
 TAGS
+*.aux
+*.lia.cache
+*.glob
+*.vo
 *.cm*
+*.back
 *.o
 *.a
 *.annot
