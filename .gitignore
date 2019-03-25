@@ -35,7 +35,6 @@ autom4te.cache
 /.Makefile.user
 /ocamlgraph/
 META.*
-*.script
 *.script.back
 *.frama-c*
 *.out
