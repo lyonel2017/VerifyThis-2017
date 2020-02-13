@@ -1,0 +1,3 @@
+library Malloc: memory
+altergo.file += "alloc.mlw";
+logic integer WPREGION( addr ) = "region_base";
