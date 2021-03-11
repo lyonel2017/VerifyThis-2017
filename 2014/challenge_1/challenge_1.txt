@@ -1,0 +1,4 @@
+Challege 1: Conincidence Count
+
+The first challenge was part of a Dafny tutorial: 
+Given 2 integer arrays in strictly increasing order, find the number of values occurring in both sequences (Coincidence Count, A Method of Programming, Dijkstra & Feijen)
