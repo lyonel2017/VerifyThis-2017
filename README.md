@@ -47,7 +47,7 @@ This project exist for the traning with Frama-C for the participation to VerifyT
             <td></td>
        </tr>
        <tr>
-            <td rowspan=2>2012</td>
+            <td rowspan=3>2012</td>
             <td><a href = "https://github.com/lyonel2017/VerifyThis-2017/tree/master/2012/challenge_1">Challenge 1</td>
             <td>WIP</td>
             <td></td>
@@ -57,7 +57,12 @@ This project exist for the traning with Frama-C for the participation to VerifyT
             <td>WIP</td>
             <td></td>
         </tr>
-       <tr>
+        <tr>
+            <td><a href = "https://github.com/lyonel2017/VerifyThis-2017/tree/master/2012/challenge_3">Challenge 3</td>
+            <td>TODO</td>
+            <td></td>
+        </tr>
+        <tr>
             <td rowspan=2>2014</td>
             <td><a href = "https://github.com/lyonel2017/VerifyThis-2017/tree/master/2014/challenge_1">Challenge 1</td>
             <td>TODO</td>
