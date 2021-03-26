@@ -23,21 +23,31 @@
         same_elements{L1, L3}(a, c, debut, fin);
 }*/
 
-/*@ predicate lt_lex (int* a, int* b, integer n) =
-      \exists integer m; 0 <= m < n && a[m] < b[m] && \forall integer i; 0 <= i < m ==> a[i] == b[i];
+/*
+  inductive lt_lex2 (int* a, int* b, integer m, integer n) {
+     case lt_lex2_1 :
+        \forall int* a, int* b, integer m, n;
+           a[m] < b[m] ==> lt_lex2 (a, b, m, n);
+     case lt_lex2_2 :
+        \forall int* a, int* b, integer m, n;
+           a[m] == b[m] ==> lt_lex2 (a, b, m+1, n) ==> lt_lex2 (a, b, m, n);
+  }
+*/
 
-    inductive lt_lex2 (int* a, int* b, integer m, integer n) {
-    case lt_lex2_1 : \forall int* a, int* b, integer m, n; a[m] < b[m] ==> lt_lex2 (a, b, m, n);
-    case lt_lex2_2 : \forall int* a, int* b, integer m, n; a[m] == b[m] ==> lt_lex2 (a, b, m+1, n) ==>
-      lt_lex2 (a, b, m, n);
-    }
 
-    lemma lt_lex_irrefl : \forall int* a, integer n; !lt_lex (a, a, n);
-    lemma lt_lex_trans : \forall int* a, int* b, int* c, integer n;
-      lt_lex (a, b, n) ==> lt_lex (b, c, n) ==> lt_lex (a, c, n);
+/*@ predicate lt_lex_aux {L1,L2}(int* a, int* b, integer n, integer m) =
+     0 <= m < n && \at(a[m],L1) < \at(b[m],L2) && same_array{L1,L2}(a, b, 0, m);
 
-    predicate is_next_lex (int* a, int* b, integer n) =
-      lt_lex (a, b, n) && \forall int* c; lt_lex (a, c, n) ==> !lt_lex(c, b, n);
+    predicate lt_lex {L1,L2}(int* a, int* b, integer n) =
+     \exists integer m; lt_lex_aux {L1,L2}(a, b, n, m);
+
+
+  lemma lt_lex_irrefl {L1,L2} : \forall int* a, integer n; same_array{L1,L2}(a, a, 0, n) ==> !lt_lex {L1,L2}(a, a, n);
+  lemma lt_lex_trans {L1,L2,L3}: \forall int* a, int* b, int* c, integer n;
+         lt_lex {L1,L2}(a, b, n) ==> lt_lex {L2,L3}(b, c, n) ==> lt_lex {L1,L3}(a, c, n);
+
+  predicate is_next_lex {L1,L2}(int* a, int* b, integer n) =
+         lt_lex{L1,L2} (a, b, n) && \forall int* c; lt_lex {L1,L2}(a, c, n) ==> !lt_lex{L1,L2}(c, b, n);
 */
 
 /*@ requires \valid(x) && \valid(y);
@@ -57,6 +67,7 @@ void swap(int *x, int *y){
   @ requires n >= 0;
   @ ensures same_elements{Pre,Post}(A,A,0,n+1);
   @ ensures \result == 0 ==> (sorted(A,0,n) && same_array{Pre,Post}(A, A, 0, n+1));
+  @ ensures \result == 1 ==> is_next_lex {Pre,Post}(A, A, n);
 */
 int next (int* A, int n){
   int i = n;
@@ -64,7 +75,6 @@ int next (int* A, int n){
   /*@ loop invariant 0 <= i <= n;
     @ loop invariant \forall integer k; i < k <= n ==> A[k] <= A[k-1];
     @ loop invariant sorted(A,i,n);
-    //@ loop invariant \forall integer x,y; i <= x < y <= n ==> A[x] >= A[y];
     @ loop assigns i;
     @ loop variant i;
     @*/
@@ -84,15 +94,18 @@ int next (int* A, int n){
     j--;
   }
 
- L1:swap(A+(i-1),A+i);
-  /*@ assert swap{L1,Here}(A,A,0,i-1,i,n+1);*/
+ L1:swap(A+(i-1),A+j);
+  /*@ assert swap{L1,Here}(A,A,0,i-1,j,n+1);*/
   /*@ assert same_elements{L1,Here}(A,A,0,n+1);*/
+  /*@ assert lt_lex_aux {L1,Here}(A, A,n,i-1);*/
 
   j = n;
   /*@ loop invariant \at(i,LoopEntry) <= i <= n;
     @ loop invariant 0 <= j <= n;
     @ loop invariant i <= j+1;
     @ loop invariant same_elements{LoopEntry,Here}(A,A,0,n+1);
+    @ loop invariant same_array{LoopEntry,Here}(A, A, 0, \at(i,LoopEntry));
+    @ loop invariant lt_lex_aux {L1,Here}(A, A,n,\at(i-1,LoopEntry));
     @ loop assigns i,j,A[0..n];
     @ loop variant j-i;
     @*/
