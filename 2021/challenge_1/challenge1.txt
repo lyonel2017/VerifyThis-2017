@@ -1,0 +1,20 @@
+Report on Challenge 1
+
+1. We use option "-rte" of Frama-C to generate the verification conditions needed to check memory safety. They are proved by WP.
+
+2. We added loop variants to the three loops.
+
+3. We introduce the predicate "permutation", inductively defined using the notion of swaps of elements that is particularly well suited to the verification of function "next" that itself uses swaps.
+
+4. If "next" returns "false", we show that "A" is left unmodified (predicate "same_array") and that it is a maximal element according to the lexicographic order. This proof is based on the lemma stating that an array sorted in decreasing order is a maximal element. This lemma is not proved.
+
+5. If "next" returns "true", we show that "A" is modified to a larger array according to the lexicographic order. We do not show that it is the next element. A few definitions and unproved lemmas have been introduced, but they do not seem sufficient to prove the latter statement.
+
+6. Sequences or dynamically extensible arrays are hard to manipulate with Frama-C. We decided to implement a dummy "permut" function that only counts the number of existing permutations.
+To prove safety, we added a precondition specifying that the parameter of "permut" is either "null" or a well-allocated array of size "n". We rely again on option "-rte" to generate the right verification conditions.
+
+7. The termination could theoretically be proved using the predicate "is_larger" as a well-defined order, but WP does not support this clause yet.
+
+8. We could not prove this property due to our simplistic "permut" function. But since each element is greater than all the preceding ones in the lexicographic order which is irreflexive, it follows that they are all unique.
+
+9-10. Again, we could not prove these properties. A possible idea to prove these is the following: we start from the smallest sequence in the lexicographic order, the sequence sorted in increasing order, and each call to "next" returns the smallest sequence that is larger than the current sequence. There is thus no sequence that can be skipped, meaning that all permutations are returned.
