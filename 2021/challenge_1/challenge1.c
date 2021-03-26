@@ -23,6 +23,23 @@
         same_elements{L1, L3}(a, c, debut, fin);
 }*/
 
+/*@ predicate lt_lex (int* a, int* b, integer n) =
+      \exists integer m; 0 <= m < n && a[m] < b[m] && \forall integer i; 0 <= i < m ==> a[i] == b[i];
+
+    inductive lt_lex2 (int* a, int* b, integer m, integer n) {
+    case lt_lex2_1 : \forall int* a, int* b, integer m, n; a[m] < b[m] ==> lt_lex2 (a, b, m, n);
+    case lt_lex2_2 : \forall int* a, int* b, integer m, n; a[m] == b[m] ==> lt_lex2 (a, b, m+1, n) ==>
+      lt_lex2 (a, b, m, n);
+    }
+
+    lemma lt_lex_irrefl : \forall int* a, integer n; !lt_lex (a, a, n);
+    lemma lt_lex_trans : \forall int* a, int* b, int* c, integer n;
+      lt_lex (a, b, n) ==> lt_lex (b, c, n) ==> lt_lex (a, c, n);
+
+    predicate is_next_lex (int* a, int* b, integer n) =
+      lt_lex (a, b, n) && \forall int* c; lt_lex (a, c, n) ==> !lt_lex(c, b, n);
+*/
+
 /*@ requires \valid(x) && \valid(y);
   @ requires \separated(x,y);
   @ ensures *x == \old(*y) && *y == \old(*x);
