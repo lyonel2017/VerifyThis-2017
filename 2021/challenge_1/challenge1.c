@@ -58,12 +58,6 @@
     lemma is_next_concat {L1,L2} : \forall int* a, int* b, integer i, j, k;
       same_array{L1,L2}(a,b,i,j) ==> is_next{L1,L2}(a,b,j,k) ==> is_next{L1,L2}(a,b,i,k);
 
-    lemma is_next_sorted_ge {L1, L2, L3} : \forall int* a, integer i, j, n;
-      sorted_ge{L1} (a, i, n) ==> \at(a[i-1], L1) > \at(a[i], L1) ==>
-      \forall int* b, int* c;
-      swap{L1,L2}(a,b,i-1,i-1,j,n) ==> permutation{L2,L3}(b,c,i,n) ==> sorted_le{L3}(c,i,n) ==>
-      is_next{L1,L3}(a,c,i,n);
-
 */
 
 /*@ requires \valid(x) && \valid(y);
@@ -82,7 +76,7 @@ void swap(int *x, int *y){
   @ ensures permutation{Pre,Post}(A,A,0,n);
   @ ensures \result == 0 ==> same_array{Pre,Post}(A, A, 0, n) && max_lex (A, 0, n);
   @ ensures \result == 1 ==> lt_lex {Pre,Post}(A,A,0,n);
-//  @ ensures \result == 1 ==> is_next_lex {Pre,Post}(A, A, 0, n);
+  @ ensures \result == 1 ==> is_next {Pre,Post}(A, A, 0, n);
   @ assigns A[0..n-1];
 */
 int next (int* A, int n){
@@ -142,6 +136,7 @@ int next (int* A, int n){
     j--;
   }
   /*@ assert sorted_le(A,\at(i,L1),n);*/
+  /*@ assert same_array{L1,Here}(A, A, 0, \at(i,L1)-1);*/
 
   return 1;
 }
