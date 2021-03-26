@@ -60,20 +60,21 @@ void swap(int *x, int *y){
   *y = t;
 }
 
-/*@ predicate sorted(int* tab, integer idx, integer n) = \forall integer x,y; idx <= x < y <= n ==> tab[x] >= tab[y];*/
+/*@ predicate sorted(int* tab, integer idx, integer n) = \forall integer x,y; idx <= x < y < n ==> tab[x] >= tab[y];*/
 
 
-/*@ requires \valid(A+(0..n));
+/*@ requires \valid(A+(0..n-1));
   @ requires n >= 0;
-  @ ensures same_elements{Pre,Post}(A,A,0,n+1);
-  @ ensures \result == 0 ==> (sorted(A,0,n) && same_array{Pre,Post}(A, A, 0, n+1));
+  @ ensures same_elements{Pre,Post}(A,A,0,n);
+  @ ensures \result == 0 ==> (sorted(A,0,n) && same_array{Pre,Post}(A, A, 0, n));
   @ ensures \result == 1 ==> is_next_lex {Pre,Post}(A, A, n);
+  @ assigns A[0..n-1];
 */
 int next (int* A, int n){
-  int i = n;
+  int i = n - 1;
 
-  /*@ loop invariant 0 <= i <= n;
-    @ loop invariant \forall integer k; i < k <= n ==> A[k] <= A[k-1];
+  /*@ loop invariant -1 <= i < n;
+    @ loop invariant \forall integer k; i < k < n ==> A[k] <= A[k-1];
     @ loop invariant sorted(A,i,n);
     @ loop assigns i;
     @ loop variant i;
@@ -83,10 +84,10 @@ int next (int* A, int n){
   }
   if (i <= 0){return 0;}
 
-  int j = n;
+  int j = n - 1;
 
-  /*@ loop invariant i <= j <= n;
-    @ loop invariant \forall integer k; j < k <= n ==> A[k] <= A[i-1];
+  /*@ loop invariant i <= j < n;
+    @ loop invariant \forall integer k; j < k < n ==> A[k] <= A[i-1];
     @ loop assigns j;
     @ loop variant j;
     @*/
@@ -95,27 +96,47 @@ int next (int* A, int n){
   }
 
  L1:swap(A+(i-1),A+j);
-  /*@ assert swap{L1,Here}(A,A,0,i-1,j,n+1);*/
-  /*@ assert same_elements{L1,Here}(A,A,0,n+1);*/
+  /*@ assert swap{L1,Here}(A,A,0,i-1,j,n);*/
+  /*@ assert same_elements{L1,Here}(A,A,0,n);*/
   /*@ assert lt_lex_aux {L1,Here}(A, A,n,i-1);*/
 
-  j = n;
+  j = n - 1;
   /*@ loop invariant \at(i,LoopEntry) <= i <= n;
-    @ loop invariant 0 <= j <= n;
+    @ loop invariant 0 <= j < n;
     @ loop invariant i <= j+1;
-    @ loop invariant same_elements{LoopEntry,Here}(A,A,0,n+1);
+    @ loop invariant same_elements{LoopEntry,Here}(A,A,0,n);
     @ loop invariant same_array{LoopEntry,Here}(A, A, 0, \at(i,LoopEntry));
     @ loop invariant lt_lex_aux {L1,Here}(A, A,n,\at(i-1,LoopEntry));
-    @ loop assigns i,j,A[0..n];
+    @ loop assigns i,j,A[0..n-1];
     @ loop variant j-i;
     @*/
   while(i < j){
   L2:swap(A+i,A+j);
-    /*@ assert swap{L2,Here}(A,A,0,i,j,n+1);*/
-    /*@ assert same_elements{L2,Here}(A,A,0,n+1);*/
+    /*@ assert swap{L2,Here}(A,A,0,i,j,n);*/
+    /*@ assert same_elements{L2,Here}(A,A,0,n);*/
     i++;
     j--;
   }
 
   return 1;
+}
+
+/*@ requires \valid(A+(0..n-1));
+    ensures sorted(A, 0, n);
+    ensures same_elements{Pre,Post} (A,A,0,n);
+*/
+void sort (int* A, int n);
+
+/*@ requires A == \null || \valid(A+(0..n-1)) && 0 <= n;
+*/
+int permut (int* A, int n) {
+  int result = 0;
+  if (!A)
+    return result;
+  sort (A, n);
+  do {
+    result++;
+  } while (next (A, n));
+
+  return result;
 }
