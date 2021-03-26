@@ -1,0 +1,13 @@
+module MPI_the_protocol
+
+use protocol.MPI_Protocol
+use int.Int
+
+let function protocol_foo_2 (dimension: int) : protocol = Seq (Foreach 1 (size-1) (fun i -> Message 0 i dimension 0 MPI_INT))
+                                                          (Foreach 1 (size-1) (fun i -> Message i 0 dimension 0 MPI_INT))
+
+let function protocol_foo_1 (dimension: int) : protocol =  While ((log(dimension)/log(2)) +1) (Seq (protocol_foo_2 dimension) (protocol_foo_2 dimension))
+
+let constant the_protocol = Seq (IntBroadcast 0 1 MPI_int) (fun dimension -> protocol_foo_1 dimension)
+
+end

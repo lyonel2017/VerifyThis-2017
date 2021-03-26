@@ -1,0 +1,6 @@
+module MPI_size
+use int.Int
+
+predicate size_constrain (s: int) = s >= 1
+
+end

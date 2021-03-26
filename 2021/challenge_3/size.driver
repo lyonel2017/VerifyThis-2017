@@ -1,0 +1,4 @@
+library mpi_size_constrain:
+
+predicate "size_constrain" (integer) = "size_constrain";
+why3.file += "size.why:MPI_size";
