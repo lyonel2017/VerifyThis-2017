@@ -1,6 +1,3 @@
-/* The following code is taken from https://github.com/bjpeterdelacruz/hpc-benchmarks/blob/master/shearsort.c*/
-
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
