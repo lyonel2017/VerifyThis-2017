@@ -60,14 +60,16 @@ void swap(int *x, int *y){
   *y = t;
 }
 
-/*@ predicate sorted(int* tab, integer idx, integer n) = \forall integer x,y; idx <= x < y < n ==> tab[x] >= tab[y];*/
+/*@ predicate sorted1(int* tab, integer idx, integer n) = \forall integer x,y; idx <= x < y < n ==> tab[x] >= tab[y];*/
+/*@ predicate sorted2(int* tab, integer idx, integer n) = \forall integer x,y; idx <= x < y < n ==> tab[x] <= tab[y];*/
 
 
 /*@ requires \valid(A+(0..n-1));
   @ requires n >= 0;
   @ ensures same_elements{Pre,Post}(A,A,0,n);
-  @ ensures \result == 0 ==> (sorted(A,0,n) && same_array{Pre,Post}(A, A, 0, n));
-  @ ensures \result == 1 ==> is_next_lex {Pre,Post}(A, A, n);
+  @ ensures \result == 0 ==> (sorted1(A,0,n) && same_array{Pre,Post}(A, A, 0, n));
+  @ ensures \result == 1 ==> lt_lex {Pre,Post}(A,A,n);
+//  @ ensures \result == 1 ==> is_next_lex {Pre,Post}(A, A, n);
   @ assigns A[0..n-1];
 */
 int next (int* A, int n){
@@ -75,7 +77,7 @@ int next (int* A, int n){
 
   /*@ loop invariant -1 <= i < n;
     @ loop invariant \forall integer k; i < k < n ==> A[k] <= A[k-1];
-    @ loop invariant sorted(A,i,n);
+    @ loop invariant sorted1(A,i,n);
     @ loop assigns i;
     @ loop variant i;
     @*/
@@ -101,12 +103,20 @@ int next (int* A, int n){
   /*@ assert lt_lex_aux {L1,Here}(A, A,n,i-1);*/
 
   j = n - 1;
+
+  /* assert sorted1(A,i,j+1);*/
+
   /*@ loop invariant \at(i,LoopEntry) <= i <= n;
     @ loop invariant 0 <= j < n;
     @ loop invariant i <= j+1;
     @ loop invariant same_elements{LoopEntry,Here}(A,A,0,n);
     @ loop invariant same_array{LoopEntry,Here}(A, A, 0, \at(i,LoopEntry));
     @ loop invariant lt_lex_aux {L1,Here}(A, A,n,\at(i-1,LoopEntry));
+    @ loop invariant sorted1(A,i,j+1);
+    @ loop invariant \forall integer x; \at(i,LoopEntry) <= x < j ==> A[x] <= A[j];
+    //@ loop invariant sorted2(A,j,n);
+    //@ loop invariant sorted2(A,\at(i,LoopEntry),i);
+
     @ loop assigns i,j,A[0..n-1];
     @ loop variant j-i;
     @*/
@@ -122,7 +132,7 @@ int next (int* A, int n){
 }
 
 /*@ requires \valid(A+(0..n-1));
-    ensures sorted(A, 0, n);
+    ensures sorted2(A, 0, n);
     ensures same_elements{Pre,Post} (A,A,0,n);
 */
 void sort (int* A, int n);
