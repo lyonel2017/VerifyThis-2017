@@ -113,10 +113,11 @@ int next (int* A, int n){
     @ loop invariant same_array{LoopEntry,Here}(A, A, 0, \at(i,LoopEntry));
     @ loop invariant lt_lex_aux {L1,Here}(A, A,n,\at(i-1,LoopEntry));
     @ loop invariant sorted1(A,i,j+1);
-    @ loop invariant \forall integer x; \at(i,LoopEntry) <= x < j ==> A[x] <= A[j];
-    //@ loop invariant sorted2(A,j,n);
-    //@ loop invariant sorted2(A,\at(i,LoopEntry),i);
-
+    @ loop invariant \forall integer x; \at(i,LoopEntry) <= x < i ==> A[x] <= A[j];
+    @ loop invariant \forall integer x; j < x < n ==> A[i] <= A[x];
+    @ loop invariant \forall integer x,y; \at(i,LoopEntry) <= x < i && j < y < n ==> A[x] <= A[y];
+    @ loop invariant sorted2(A,j,n);
+    @ loop invariant sorted2(A,\at(i,LoopEntry),i);
     @ loop assigns i,j,A[0..n-1];
     @ loop variant j-i;
     @*/
@@ -127,6 +128,7 @@ int next (int* A, int n){
     i++;
     j--;
   }
+  /*@ assert  sorted2(A,\at(i,L1),n);*/
 
   return 1;
 }
