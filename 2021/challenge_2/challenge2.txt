@@ -1,0 +1,4 @@
+With Frama-C, it can be difficult to manipulate pointers. For this challenge, we thus decided to switch to Coq and try to prove something in the spirit of the challenge but with Coq data structures (algebraic data types).
+
+The question about memory safety is irrelevant in this context.
+We tried to answer question 3, but a few admits remain in our proof.
