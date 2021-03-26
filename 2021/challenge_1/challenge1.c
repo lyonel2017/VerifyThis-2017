@@ -1,6 +1,3 @@
-/*@ predicate sorted(int* tab, integer idx) = \forall integer x,y; 0 <= x < y < idx ==> tab[x] <= tab[y]; */
-
-
 /*@ predicate swap{L1, L2}(int *a, int *b, integer debut, integer i, integer j, integer fin) =
       debut <= i < fin && debut <= j < fin &&
       \at(a[i], L1) == \at(b[j], L2) &&
@@ -26,21 +23,6 @@
         same_elements{L1, L3}(a, c, debut, fin);
 }*/
 
-/* lemma case split {L1, L2}: \forall int *a, int *b, integer debut, i, fin;
-        debut <= i < fin ==>
-        same_elements{L1,L2}(a, b, debut, i) ==>
-        same_elements{L1,L2}(a, b, i, fin) ==>
-        same_elements{L1,L2}(a, b, debut, fin);
-*/
-
-/* lemma partition {L1, L2}: \forall int *a, int *b, integer debut, i, j, fin;
-        debut <= i <= j < fin ==>
-        same_array{L1,L2}(a, b, debut, i) ==>
-        same_elements{L1,L2}(a, b, i, j) ==>
-        same_array{L1,L2}(a, b, j, fin) ==>
-        same_elements{L1, L2}(a, b, debut, fin);
-*/
-
 /*@ requires \valid(x) && \valid(y);
   @ requires \separated(x,y);
   @ ensures *x == \old(*y) && *y == \old(*x);
@@ -51,14 +33,21 @@ void swap(int *x, int *y){
   *y = t;
 }
 
+/*@ predicate sorted(int* tab, integer idx, integer n) = \forall integer x,y; idx <= x < y <= n ==> tab[x] >= tab[y];*/
+
+
 /*@ requires \valid(A+(0..n));
   @ requires n >= 0;
-  @ ensures same_elements{Pre,Post}(A,A,0,n+1);*/
+  @ ensures same_elements{Pre,Post}(A,A,0,n+1);
+  @ ensures \result == 0 ==> (sorted(A,0,n) && same_array{Pre,Post}(A, A, 0, n+1));
+*/
 int next (int* A, int n){
   int i = n;
 
   /*@ loop invariant 0 <= i <= n;
     @ loop invariant \forall integer k; i < k <= n ==> A[k] <= A[k-1];
+    @ loop invariant sorted(A,i,n);
+    //@ loop invariant \forall integer x,y; i <= x < y <= n ==> A[x] >= A[y];
     @ loop assigns i;
     @ loop variant i;
     @*/
@@ -91,8 +80,9 @@ int next (int* A, int n){
     @ loop variant j-i;
     @*/
   while(i < j){
-    swap(A+i,A+j);
-    /*@ assert swap{L1,Here}(A,A,0,i,j,n+1);*/
+  L2:swap(A+i,A+j);
+    /*@ assert swap{L2,Here}(A,A,0,i,j,n+1);*/
+    /*@ assert same_elements{L2,Here}(A,A,0,n+1);*/
     i++;
     j--;
   }
