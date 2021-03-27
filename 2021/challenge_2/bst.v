@@ -83,6 +83,7 @@ Proof.
   - apply IHl1. inversion H; assumption.
 Qed.
 
+(* Technical lemma *)
 Lemma sorted_dll_to_bst_rec l n : Sorted R l ->
   n <= length l ->
   let (t, l2) := dll_to_bst_rec l n in
@@ -150,7 +151,16 @@ Proof.
               rewrite Forall_forall in H4. apply H4.
               apply in_app_iff. left; assumption.
     + constructor.
-      * admit.
+      * destruct root.
+      -- simpl in Ha3.
+         pose proof (dll_to_bst_rec_length l (Nat.div2 n)).
+         rewrite Hrec1 in H. simpl in H.
+         lia.
+      -- eapply Forall_tree_impl; try apply H02.
+         simpl; intros x H2. simpl in H15.
+         rewrite H15 in H2.
+         inversion H2; subst.
+         apply Forall_app in H4. apply H4.
       * destruct root.
         -- simpl in Ha3.
            replace (n - Nat.div2 n - 1) with 0 in Hrec2 by lia.
@@ -170,10 +180,17 @@ Proof.
          lia.
       -- simpl in H15. exists (l1' ++ a :: l3).
          split.
-         ++ admit.
+         ++ constructor.
+            ** eapply Forall_tree_impl; try apply H03.
+               simpl; intros x H2.
+               rewrite in_app_iff. left; assumption.
+            ** simpl. rewrite in_app_iff. right; left; reflexivity.
+            ** eapply Forall_tree_impl; try apply H14.
+               simpl; intros x H2.
+               rewrite in_app_iff. right; right; assumption.
          ++ rewrite app_assoc_reverse. simpl.
             rewrite <- H15. assumption.
-Admitted.
+Qed.
 
 (* Main theorem *)
 Lemma sorted_bst l : Sorted R l -> is_bst (dll_to_bst l).
@@ -189,9 +206,14 @@ Qed.
 
 End test.
 
-(*
-Goal dll_to_bst_rec _ 0 [1;2;3;4;5] 10 = (Leaf _, []).
+(* Test *)
+Goal dll_to_bst_rec _ 0 [1;2;3;4;5] 10 =
+  (Node nat
+   (Node nat (Node nat (Node nat (Leaf nat) 1 (Leaf nat)) 2 (Leaf nat)) 3
+      (Node nat (Node nat (Leaf nat) 4 (Leaf nat)) 5 (Leaf nat))) 0
+   (Node nat (Node nat (Node nat (Leaf nat) 0 (Leaf nat)) 0 (Leaf nat)) 0
+      (Node nat (Leaf nat) 0 (Leaf nat))), []).
 Proof.
-  repeat (simp dll_to_bst_rec; simpl).
-  simp dll_to_bst_rec. simpl.
-*)
+(*   repeat (simp dll_to_bst_rec; simpl). *)
+  reflexivity.
+Qed.
