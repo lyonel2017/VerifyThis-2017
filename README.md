@@ -148,5 +148,26 @@ This project exist for the traning with Frama-C for the participation to VerifyT
             <td>TODO</td>
             <td></td>
         </tr>
-    </tbody>
+        <tr>
+            <td rowspan=4>2021</td>
+            <td><a href = "https://github.com/lyonel2017/VerifyThis-2017/tree/master/2021/challenge_1">Challenge 1</a></td>
+            <td>WIP</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href = "https://github.com/lyonel2017/VerifyThis-2017/tree/master/2021/challenge_2">Challenge 2</td>
+            <td>TODO</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href = "https://github.com/lyonel2017/VerifyThis-2017/tree/master/2021/challenge_3">Challenge 3</td>
+            <td>WIP</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href = "https://github.com/lyonel2017/VerifyThis-2017/tree/master/2021/microchallenge">Microchallenge</td>
+            <td>DONE</td>
+            <td></td>
+        </tr>
+</tbody>
 </table>
