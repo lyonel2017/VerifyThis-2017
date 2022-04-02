@@ -71,7 +71,7 @@ sr merge (sr r1, sr r2) {
   /*@ loop invariant 0 <= ri1 <= length(r1.runs);
       loop invariant 0 <= ri2 <= length(r2.runs);
       loop invariant wf(res.data);
-      loop assigns res.data, ri1, ri2;
+      loop assigns res.data, ri1, ri2, di1, di2;
       loop variant length (r1.runs) + length (r2.runs) - ri1 - ri2;
   */
   while (ri1 < length (r1.runs) || ri2 < length(r2.runs)) {
@@ -80,8 +80,8 @@ sr merge (sr r1, sr r2) {
 
     if (t1) {
       /*@ loop invariant wf(res.data);
-	@ loop invariant 0 <= di1 <= get(r1.runs,ri1); 
-          loop assigns res, di1;
+          loop invariant 0 <= di1 <= get(r1.runs,ri1);
+          loop assigns res.data, di1;
           loop variant get(r1.runs,ri1) - di1;
       */
       for (; di1 < get(r1.runs,ri1); ++di1) {
@@ -92,8 +92,8 @@ sr merge (sr r1, sr r2) {
 
     if (t2) {
       /*@ loop invariant wf(res.data);
-	@ loop invariant 0 <= di2 <= get(r2.runs,ri2);
-          loop assigns res, di2;
+          loop invariant 0 <= di2 <= get(r2.runs,ri2);
+          loop assigns res.data, di2;
           loop variant get(r2.runs,ri2) - di2;
       */
       for (; di2 < get(r2.runs,ri2); ++di2) {
