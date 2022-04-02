@@ -1,4 +1,23 @@
+// Frama-C Veterans : Lionel Blatter, Jean-Christophe Léchenet
+
 #define N 10000
+
+/* Simplifying hypotheses:
+   - real -> int
+   - all points >= (0, 0, 0)
+   - we statically have a bound [N] of the needed number of cubes
+   - the result is stored in the array [pd] taken as an argument,
+     we assume that it is as large as the point cloud [p] and we
+     return the exact size that we use
+
+  Achievements:
+  - termination
+  - memory safety (unfinished)
+  - size(pd) <= size(p) (unfinished)
+
+  Alternative approach that we didn't have time to try: axiomatize a specialized
+  malloc to have dynamic allocation without the inconveniences
+*/
 
 typedef struct Point {
   int x;
@@ -45,6 +64,9 @@ int downSample (int n, Point p[], int voxel_size, Point pd[]) {
       loop invariant bounded_x (p, i, x_max);
       loop invariant bounded_y (p, i, y_max);
       loop invariant bounded_z (p, i, z_max);
+      loop invariant x_max <= N * voxel_size - 1;
+      loop invariant y_max <= N * voxel_size - 1;
+      loop invariant z_max <= N * voxel_size - 1;
       loop assigns x_max, y_max, z_max, x_min, y_min, z_min, i;
       loop variant n - i;
   */
@@ -57,8 +79,8 @@ int downSample (int n, Point p[], int voxel_size, Point pd[]) {
     z_min = p[i].z < z_min ? p[i].z : z_min;
   }
 
-  // TODO: ceiling ? -> we take + 1, safe over_approximation
-  // no abs -> x_max >= x_min
+  // ceiling -> we take + 1, safe over_approximation
+  // abs not needed, since x_max >= x_min
   int num_vox_x = (x_max - x_min)/voxel_size + 1;
   int num_vox_y = (y_max - y_min)/voxel_size + 1;
   int num_vox_z = (z_max - z_min)/voxel_size + 1;
@@ -67,7 +89,7 @@ int downSample (int n, Point p[], int voxel_size, Point pd[]) {
   //@ assert num_vox_y <= N;
   //@ assert num_vox_z <= N;
 
-  // we assume that we don't need more than N*N*N
+  // thanks to the requirements, we know that we don't need more than N*N*N
   Point voxel_array[N][N][N] = {{{0}}};
   int count_array[N][N][N] = {{{0}}};
 
