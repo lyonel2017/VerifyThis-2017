@@ -30,7 +30,7 @@ typedef struct Point {
     predicate bounded_y (Point* a, int n, integer bound) =
       \forall integer i; 0 <= i < n ==> a[i].y <= bound;
     predicate bounded_z (Point* a, int n, integer bound) =
-      \forall integer i; 0 <= i < n ==> a[i].y <= bound;
+      \forall integer i; 0 <= i < n ==> a[i].z <= bound;
 */
       
 /*@ requires 0 < n;
