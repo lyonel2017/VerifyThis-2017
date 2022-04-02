@@ -19,7 +19,8 @@ typedef struct sr {
   array data;
 } sr;
 
-/*@ predicate wf_sr(sr r) = wf(r.runs) && wf(r.data);
+/*@ predicate wf_sr(sr r) = wf(r.runs) && wf(r.data) &&
+      (\forall integer i; i <= 0 <= length(r.runs) ==> 0 <= get(r.runs,i) <= length(r.data));
 */
 
 /*@ requires wf(a);
@@ -70,6 +71,8 @@ sr merge (sr r1, sr r2) {
 
   /*@ loop invariant 0 <= ri1 <= length(r1.runs);
       loop invariant 0 <= ri2 <= length(r2.runs);
+      loop invariant 0 <= di1 < length(r1.data);
+      loop invariant 0 <= di2 < length(r2.data);
       loop invariant wf(res.data);
       loop assigns res, ri1, ri2, di1, di2;
       loop variant length (r1.runs) + length (r2.runs) - ri1 - ri2;
