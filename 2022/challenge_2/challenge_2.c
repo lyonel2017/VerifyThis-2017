@@ -1,3 +1,24 @@
+// Frama-C Veterans : Lionel Blatter, Jean-Christophe Léchenet
+
+/* Simplifying hypotheses:
+   - no polymorphism: int/unsigned int
+   - [size_t] -> int/unsigned int
+   - [array] is implemented as an array of statically known size together with an
+     integer specifying the allocated part of the array. If we try to [push_back]
+     too much, we exit the program. This allows to keep contracts simple.
+
+  Achievements:
+  - termination
+  - memory safety (unfinished): we probably need to show that values in [r.runs] are
+    less than or equal to the size of [r.data]
+  - properties related to sorting: nothing
+
+  Alternative approach that we didn't have time to try: we use well-formedness
+  invariants, but since Frama-C/WP does not support type invariants, we had to
+  write them everywhere manually. The plugin called MetaAcsl allows (in theory) to
+  automatize that.
+*/
+
 #include <stdlib.h>
 
 #define N 1000
