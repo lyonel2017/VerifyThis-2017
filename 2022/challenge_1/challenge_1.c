@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #define N 100
 
 typedef struct Point {
@@ -18,7 +16,7 @@ typedef struct Point {
     requires \separated(p+(0..n-1), pd+(0..n-1));
     terminates \true;
 */
-void downSample (int n, Point p[], int voxel_size, Point pd[]) {
+int downSample (int n, Point p[], int voxel_size, Point pd[]) {
   int x_max, y_max, z_max, x_min, y_min, z_min;
 
   x_max = p[0].x;
@@ -31,6 +29,9 @@ void downSample (int n, Point p[], int voxel_size, Point pd[]) {
       loop invariant 0 <= x_min <= x_max;
       loop invariant 0 <= y_min <= y_max;
       loop invariant 0 <= z_min <= z_max;
+      loop invariant \forall integer j; 0 <= j < i ==> x_min <= p[j].x <= x_max;
+      loop invariant \forall integer j; 0 <= j < i ==> y_min <= p[j].y <= y_max;
+      loop invariant \forall integer j; 0 <= j < i ==> z_min <= p[j].z <= z_max;
       loop assigns x_max, y_max, z_max, x_min, y_min, z_min, i;
       loop variant n - i;
   */
@@ -43,17 +44,22 @@ void downSample (int n, Point p[], int voxel_size, Point pd[]) {
     z_min = p[i].z < z_min ? p[i].z : z_min;
   }
 
-  // TODO: ceiling ?
-  int num_vox_x = abs(x_max - x_min)/voxel_size;
-  int num_vox_y = abs(y_max - y_min)/voxel_size;
-  int num_vox_z = abs(z_max - z_min)/voxel_size;
+  // TODO: ceiling ? -> we take + 1, safe over_approximation
+  // no abs -> x_max >= x_min
+  int num_vox_x = (x_max - x_min)/voxel_size + 1;
+  int num_vox_y = (y_max - y_min)/voxel_size + 1;
+  int num_vox_z = (z_max - z_min)/voxel_size + 1;
+
+  //@ assert num_vox_x <= N;
+  //@ assert num_vox_y <= N;
+  //@ assert num_vox_z <= N;
 
   // we assume that we don't need more than N*N*N
-  Point voxel_array[N][N][N];
-  int count_array[N][N][N];
+  Point voxel_array[N][N][N] = {{{0}}};
+  int count_array[N][N][N] = {{{0}}};
 
   /*@ loop invariant 0 <= i <= n;
-      loop assigns voxel_array[0..n-1][0..n-1][0..n-1], i;
+      loop assigns voxel_array[0.. N -1][0.. N -1][0.. N -1], count_array[0.. N -1][0.. N -1][0.. N -1], i;
       loop variant n - i;
   */
   for (int i = 0; i < n; i++) {
@@ -74,7 +80,7 @@ void downSample (int n, Point p[], int voxel_size, Point pd[]) {
       loop variant num_vox_x - i;
   */
   for (int i = 0; i < num_vox_x; i++) {
-    /* loop invariant 0 <= j <= num_vox_y;
+    /*@ loop invariant 0 <= j <= num_vox_y;
        loop invariant 0 <= index <= n;
        loop assigns pd[0..n-1], j;
        loop variant num_vox_y - j;
@@ -98,5 +104,5 @@ void downSample (int n, Point p[], int voxel_size, Point pd[]) {
     }
   }
 
-  return;
+  return index;
 }
