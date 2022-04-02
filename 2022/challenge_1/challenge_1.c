@@ -1,4 +1,4 @@
-#define N 100
+#define N 10000
 
 typedef struct Point {
   int x;
@@ -6,15 +6,28 @@ typedef struct Point {
   int z;
 } Point;
 
+/*@ predicate bounded_x (Point* a, int n, integer bound) =
+      \forall integer i; 0 <= i < n ==> a[i].x <= bound;
+    predicate bounded_y (Point* a, int n, integer bound) =
+      \forall integer i; 0 <= i < n ==> a[i].y <= bound;
+    predicate bounded_z (Point* a, int n, integer bound) =
+      \forall integer i; 0 <= i < n ==> a[i].y <= bound;
+*/
+      
 /*@ requires 0 < n;
     requires \valid(p+(0..n-1));
     requires \forall integer i; 0 <= i < n ==> 0 <= p[i].x;
     requires \forall integer i; 0 <= i < n ==> 0 <= p[i].y;
     requires \forall integer i; 0 <= i < n ==> 0 <= p[i].z;
+    requires bounded_x (p, n, N * voxel_size - 1);
+    requires bounded_y (p, n, N * voxel_size - 1);
+    requires bounded_z (p, n, N * voxel_size - 1);
     requires 0 < voxel_size;
     requires \valid(pd+(0..n-1));
     requires \separated(p+(0..n-1), pd+(0..n-1));
     terminates \true;
+    ensures 0 <= \result <= n;
+    assigns pd[0..n-1];
 */
 int downSample (int n, Point p[], int voxel_size, Point pd[]) {
   int x_max, y_max, z_max, x_min, y_min, z_min;
@@ -29,9 +42,9 @@ int downSample (int n, Point p[], int voxel_size, Point pd[]) {
       loop invariant 0 <= x_min <= x_max;
       loop invariant 0 <= y_min <= y_max;
       loop invariant 0 <= z_min <= z_max;
-      loop invariant \forall integer j; 0 <= j < i ==> x_min <= p[j].x <= x_max;
-      loop invariant \forall integer j; 0 <= j < i ==> y_min <= p[j].y <= y_max;
-      loop invariant \forall integer j; 0 <= j < i ==> z_min <= p[j].z <= z_max;
+      loop invariant bounded_x (p, i, x_max);
+      loop invariant bounded_y (p, i, y_max);
+      loop invariant bounded_z (p, i, z_max);
       loop assigns x_max, y_max, z_max, x_min, y_min, z_min, i;
       loop variant n - i;
   */
@@ -76,19 +89,19 @@ int downSample (int n, Point p[], int voxel_size, Point pd[]) {
   int index = 0;
   /*@ loop invariant 0 <= i <= num_vox_x;
       loop invariant 0 <= index <= n;
-      loop assigns pd[0..n-1], i;
+      loop assigns pd[0..n-1], index, i;
       loop variant num_vox_x - i;
   */
   for (int i = 0; i < num_vox_x; i++) {
     /*@ loop invariant 0 <= j <= num_vox_y;
        loop invariant 0 <= index <= n;
-       loop assigns pd[0..n-1], j;
+       loop assigns pd[0..n-1], index, j;
        loop variant num_vox_y - j;
     */
     for (int j = 0; j < num_vox_y; j++) {
       /*@ loop invariant 0 <= k <= num_vox_z;
           loop invariant 0 <= index <= n;
-          loop assigns pd[0..n-1], k;
+          loop assigns pd[0..n-1], index, k;
           loop variant num_vox_z - k;
       */
       for (int k = 0; k < num_vox_z; k++) {
