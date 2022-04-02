@@ -22,11 +22,11 @@ How did you choose the tool to use? Was the choice related to the specific chall
 
 Which tool feature did you find most helpful to solve the challenge? Support of advanced C features (e.g. allocation of structures)
 
-Which tool limitation was the most significant obstacle to solve the challenge? Dynamic allocation is not really supported
+Which tool limitation was the most significant obstacle to solve the challenge? Dynamic allocation is not really supported, no real support of concurrency
 
 Is there any improvement to the tool that you would suggest based on your experience using it in the challenge? Better support of ACSL (e.g. lambda logic functions)
 
-If you would be doing the same challenge again, would you pick another tool to solve it? Why or why not? Challenges 1 and 2 are well-suited for Frama-C, we mainly need more time.
+If you would be doing the same challenge again, would you pick another tool to solve it? Why or why not? Frama-C is well-suited for challenges 1 and 2, we mainly need more time to solve the problems. We would probably pick another tool for challenge 3: there are plugins of Frama-C dealing with concurrency but they are outdated or not public.
 
 
 
@@ -38,162 +38,186 @@ Which verification tasks were verified? termination, memory safety (partial), si
 
 ## Implementation
 
-Does the implementation include all expected functionality? (If not, what’s missing)
+Does the implementation include all expected functionality? (If not, what’s missing) Yes
 
 Are there any simplifications in the implementation? What were they, and why did you include them?
-- real -> int
-- all points >= (0, 0, 0)
-- we statically have a bound [N] of the needed number of cubes
+- real -> int: easier to begin with
+- all points >= (0, 0, 0): avoids some overflows
+- we statically have a bound [N] of the needed number of cubes, because this allows to statically know the sizes of voxel_array and count_array
 - the result is stored in the array [pd] taken as an argument,
   we assume that it is as large as the point cloud [p] and we
-  return the exact size that we use
+  return the exact size that we use. It avoids the dynamic allocations.
 
 Does the implementation follow exactly the algorithm and data structure given in pseudo-code? If it deviates from it, how and why does it deviate?
-Poor support od dynamic allocation
+It deviates (cf. previous question) because of poor support of dynamic allocation
 
 Is your implementation executable? If not, how much effort is it to make it executable? Yes
 
 ## Specification
 
 Does the specification include basic correctness requirements (memory safety, termination, ...)? Which of such requirements are guaranteed by the implementation language (for example by its type system)?
+C provides very few guarantees. Option -wp-rte inserts the needed checks to avoid runtime errors, and we have to add the right requirements and invariants to have these checks pass.
 
 
 ## Verification
 
-Does the verification guarantee correctness for all valid inputs?
+Does the verification guarantee correctness for all valid inputs? Yes (WP calculus)
 
- Does the verification make any simplifying assumptions
- (such as: integers are unbounded, execution is sequential/single-threaded, etc.)?
+Does the verification make any simplifying assumptions
+ (such as: integers are unbounded, execution is sequential/single-threaded, etc.)? None that is relevant to the exercise (execution is sequential but it does not seem to have an impact on the exercise)
 
-Is the verification of any properties partial or depending on restricting assumptions?
+Is the verification of any properties partial or depending on restricting assumptions? memory safety and size(pd) <= size(p) were not finished
 
 
-Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)?
+Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)? No
 
 
 For each property that is not verified or not verified completely: Could it be proved given more proof guidance (such as more complex invariants), or does it reflect an intrinsic limitation of the tool/method that was used?
+We just need more time for what we started. The version with dynamic allocation seems out of reach for now.
 
 
 ## Process
-How much human effort was involved in verification?
+How much human effort was involved in verification? We were just in the first step, trying to figure out invariants. We did not reach the point where we just need to find a way to help the provers.
 
 Examples of aspects that are relevant: modelling aspects of the specification, defining lemmas, proving them, adding intermediate assertions, optimizing the running time of the verifier, interacting with the prover, dealing with theories (such as properties of arithmetic), and so on.
 
 
-How much time is needed to run the proofs? On what hardware?
+How much time is needed to run the proofs? On what hardware? A few minutes on a standard laptop
 
-Are the proofs fully automatic?
+Are the proofs fully automatic? Yes
 
 If they are interactive: How much user effort was involved? How complex are the proof scripts?
 
 How much additional time do you think would it take you to complete all verification tasks (including removing any restricting assumptions you may have used)?
-
+One day with the restrictions. Not clear if we can remove the restrictions.
 
 
 ### Challenge 2
 
-Which verification tasks were specified?
+Which verification tasks were specified? termination, memory safety
 
-Which verification tasks were verified?
+Which verification tasks were verified? termination (not of msort because it is a recursive function), memory safety (partially)
 
 ## Implementation
 
-Does the implementation include all expected functionality? (If not, what’s missing)
+Does the implementation include all expected functionality? (If not, what’s missing) Yes
 
 Are there any simplifications in the implementation? What were they, and why did you include them?
+- no polymorphism: int/unsigned int -> it does not exist in C
+- [size_t] -> int/unsigned int: easier to begin with
+- [array] is implemented as an array of statically known size together with an
+  integer specifying the allocated part of the array. If we try to [push_back]
+  too much, we exit the program. This allows to keep contracts simple.
+  Thanks to that, we avoid the dynamic allocations.
 
 Does the implementation follow exactly the algorithm and data structure given in pseudo-code? If it deviates from it, how and why does it deviate?
+Yes
 
-Is your implementation executable? If not, how much effort is it to make it executable?
+Is your implementation executable? If not, how much effort is it to make it executable? Yes
 
 ## Specification
 
 Does the specification include basic correctness requirements (memory safety, termination, ...)? Which of such requirements are guaranteed by the implementation language (for example by its type system)?
+C provides very few guarantees. Option -wp-rte inserts the needed checks to avoid runtime errors, and we have to add the right requirements and invariants to have these checks pass.
+We use option -wp-frama-c-stdlib-terminate to get for free the termination of function exit.
 
 
 ## Verification
 
-Does the verification guarantee correctness for all valid inputs?
+Does the verification guarantee correctness for all valid inputs? Yes (WP calculus)
 
- Does the verification make any simplifying assumptions
+Does the verification make any simplifying assumptions
  (such as: integers are unbounded, execution is sequential/single-threaded, etc.)?
+None that is relevant to the exercise (execution is sequential but it does not seem to have an impact on the exercise)
 
 Is the verification of any properties partial or depending on restricting assumptions?
+termination of msort because it is a recursive function, memory safety is unfinished
 
 
-Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)?
+Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)? No
 
 
 For each property that is not verified or not verified completely: Could it be proved given more proof guidance (such as more complex invariants), or does it reflect an intrinsic limitation of the tool/method that was used?
+We just need more time
 
 
 ## Process
 How much human effort was involved in verification?
+We were just in the first step, trying to figure out invariants. We did not reach the point where we just need to find a way to help the provers.
 
 Examples of aspects that are relevant: modelling aspects of the specification, defining lemmas, proving them, adding intermediate assertions, optimizing the running time of the verifier, interacting with the prover, dealing with theories (such as properties of arithmetic), and so on.
 
 
-How much time is needed to run the proofs? On what hardware?
+How much time is needed to run the proofs? On what hardware? A few minutes on a standard laptop.
 
-Are the proofs fully automatic?
+Are the proofs fully automatic? Yes
 
 If they are interactive: How much user effort was involved? How complex are the proof scripts?
 
 How much additional time do you think would it take you to complete all verification tasks (including removing any restricting assumptions you may have used)?
+5 hours
 
 
 
 ### Challenge 3
 
-Which verification tasks were specified?
+As mentioned above, Frama-C does not really support concurrency. We tried to use an (outdated) plugin called Cons2Seq (https://github.com/AllanBlanchard/Frama-C-Conc2Seq) that transforms a concurrent program into an equivalent program where the interleaving semantics is made explicit, but without success. We also tried to model the problem in Coq in the form of a small language containing only the main instructions (insert and member). The goal is then to prove that any interleaving of these operations satisfies the right properties.
 
-Which verification tasks were verified?
+Which verification tasks were specified? None
+
+Which verification tasks were verified? None
 
 ## Implementation
 
 Does the implementation include all expected functionality? (If not, what’s missing)
+No implementation
 
 Are there any simplifications in the implementation? What were they, and why did you include them?
+No implementation
 
 Does the implementation follow exactly the algorithm and data structure given in pseudo-code? If it deviates from it, how and why does it deviate?
+No implementation
 
 Is your implementation executable? If not, how much effort is it to make it executable?
+No implementation
 
 ## Specification
 
 Does the specification include basic correctness requirements (memory safety, termination, ...)? Which of such requirements are guaranteed by the implementation language (for example by its type system)?
+No specification
 
 
 ## Verification
 
-Does the verification guarantee correctness for all valid inputs?
+Does the verification guarantee correctness for all valid inputs? Nothing verified
 
- Does the verification make any simplifying assumptions
+Does the verification make any simplifying assumptions
  (such as: integers are unbounded, execution is sequential/single-threaded, etc.)?
+Nothing verified
 
 Is the verification of any properties partial or depending on restricting assumptions?
+Nothing verified
 
 
 Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)?
+Nothing verified
 
 
 For each property that is not verified or not verified completely: Could it be proved given more proof guidance (such as more complex invariants), or does it reflect an intrinsic limitation of the tool/method that was used?
+Hard limitation of the tool
 
 
 ## Process
-How much human effort was involved in verification?
+How much human effort was involved in verification? We put effort in finding alternative approachs
 
 Examples of aspects that are relevant: modelling aspects of the specification, defining lemmas, proving them, adding intermediate assertions, optimizing the running time of the verifier, interacting with the prover, dealing with theories (such as properties of arithmetic), and so on.
 
 
-How much time is needed to run the proofs? On what hardware?
+How much time is needed to run the proofs? On what hardware? No proof
 
-Are the proofs fully automatic?
+Are the proofs fully automatic? No proof
 
 If they are interactive: How much user effort was involved? How complex are the proof scripts?
 
 How much additional time do you think would it take you to complete all verification tasks (including removing any restricting assumptions you may have used)?
-
-
-
-
+A lot
