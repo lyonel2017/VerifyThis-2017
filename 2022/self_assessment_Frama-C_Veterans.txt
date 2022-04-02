@@ -1,0 +1,199 @@
+### Team
+Team Name: Frama-C Veterans
+
+Team members: Lionel Blatter, Jean-Christophe Léchenet
+
+Students/non students: Non students
+
+Affiliation(s): KIT, Inria
+
+Tools used: Frama-C
+
+Are the team members developers of the used tools?
+Former developers of Frama-C
+
+
+
+
+### Tool
+Which tool(s) have you used? Frama-C
+
+How did you choose the tool to use? Was the choice related to the specific challenge? Historical choice
+
+Which tool feature did you find most helpful to solve the challenge? Support of advanced C features (e.g. allocation of structures)
+
+Which tool limitation was the most significant obstacle to solve the challenge? Dynamic allocation is not really supported
+
+Is there any improvement to the tool that you would suggest based on your experience using it in the challenge? Better support of ACSL (e.g. lambda logic functions)
+
+If you would be doing the same challenge again, would you pick another tool to solve it? Why or why not? Challenges 1 and 2 are well-suited for Frama-C, we mainly need more time.
+
+
+
+### Challenge 1
+
+Which verification tasks were specified? termination, memory safety, size (pd) <= size (p)
+
+Which verification tasks were verified? termination, memory safety (partial), size (pd) <= size (p) (partial)
+
+## Implementation
+
+Does the implementation include all expected functionality? (If not, what’s missing)
+
+Are there any simplifications in the implementation? What were they, and why did you include them?
+- real -> int
+- all points >= (0, 0, 0)
+- we statically have a bound [N] of the needed number of cubes
+- the result is stored in the array [pd] taken as an argument,
+  we assume that it is as large as the point cloud [p] and we
+  return the exact size that we use
+
+Does the implementation follow exactly the algorithm and data structure given in pseudo-code? If it deviates from it, how and why does it deviate?
+Poor support od dynamic allocation
+
+Is your implementation executable? If not, how much effort is it to make it executable? Yes
+
+## Specification
+
+Does the specification include basic correctness requirements (memory safety, termination, ...)? Which of such requirements are guaranteed by the implementation language (for example by its type system)?
+
+
+## Verification
+
+Does the verification guarantee correctness for all valid inputs?
+
+ Does the verification make any simplifying assumptions
+ (such as: integers are unbounded, execution is sequential/single-threaded, etc.)?
+
+Is the verification of any properties partial or depending on restricting assumptions?
+
+
+Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)?
+
+
+For each property that is not verified or not verified completely: Could it be proved given more proof guidance (such as more complex invariants), or does it reflect an intrinsic limitation of the tool/method that was used?
+
+
+## Process
+How much human effort was involved in verification?
+
+Examples of aspects that are relevant: modelling aspects of the specification, defining lemmas, proving them, adding intermediate assertions, optimizing the running time of the verifier, interacting with the prover, dealing with theories (such as properties of arithmetic), and so on.
+
+
+How much time is needed to run the proofs? On what hardware?
+
+Are the proofs fully automatic?
+
+If they are interactive: How much user effort was involved? How complex are the proof scripts?
+
+How much additional time do you think would it take you to complete all verification tasks (including removing any restricting assumptions you may have used)?
+
+
+
+### Challenge 2
+
+Which verification tasks were specified?
+
+Which verification tasks were verified?
+
+## Implementation
+
+Does the implementation include all expected functionality? (If not, what’s missing)
+
+Are there any simplifications in the implementation? What were they, and why did you include them?
+
+Does the implementation follow exactly the algorithm and data structure given in pseudo-code? If it deviates from it, how and why does it deviate?
+
+Is your implementation executable? If not, how much effort is it to make it executable?
+
+## Specification
+
+Does the specification include basic correctness requirements (memory safety, termination, ...)? Which of such requirements are guaranteed by the implementation language (for example by its type system)?
+
+
+## Verification
+
+Does the verification guarantee correctness for all valid inputs?
+
+ Does the verification make any simplifying assumptions
+ (such as: integers are unbounded, execution is sequential/single-threaded, etc.)?
+
+Is the verification of any properties partial or depending on restricting assumptions?
+
+
+Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)?
+
+
+For each property that is not verified or not verified completely: Could it be proved given more proof guidance (such as more complex invariants), or does it reflect an intrinsic limitation of the tool/method that was used?
+
+
+## Process
+How much human effort was involved in verification?
+
+Examples of aspects that are relevant: modelling aspects of the specification, defining lemmas, proving them, adding intermediate assertions, optimizing the running time of the verifier, interacting with the prover, dealing with theories (such as properties of arithmetic), and so on.
+
+
+How much time is needed to run the proofs? On what hardware?
+
+Are the proofs fully automatic?
+
+If they are interactive: How much user effort was involved? How complex are the proof scripts?
+
+How much additional time do you think would it take you to complete all verification tasks (including removing any restricting assumptions you may have used)?
+
+
+
+### Challenge 3
+
+Which verification tasks were specified?
+
+Which verification tasks were verified?
+
+## Implementation
+
+Does the implementation include all expected functionality? (If not, what’s missing)
+
+Are there any simplifications in the implementation? What were they, and why did you include them?
+
+Does the implementation follow exactly the algorithm and data structure given in pseudo-code? If it deviates from it, how and why does it deviate?
+
+Is your implementation executable? If not, how much effort is it to make it executable?
+
+## Specification
+
+Does the specification include basic correctness requirements (memory safety, termination, ...)? Which of such requirements are guaranteed by the implementation language (for example by its type system)?
+
+
+## Verification
+
+Does the verification guarantee correctness for all valid inputs?
+
+ Does the verification make any simplifying assumptions
+ (such as: integers are unbounded, execution is sequential/single-threaded, etc.)?
+
+Is the verification of any properties partial or depending on restricting assumptions?
+
+
+Does the verification depend on any (yet) unproved auxiliary statements (axioms, ‘sorry’s, admitted, etc)?
+
+
+For each property that is not verified or not verified completely: Could it be proved given more proof guidance (such as more complex invariants), or does it reflect an intrinsic limitation of the tool/method that was used?
+
+
+## Process
+How much human effort was involved in verification?
+
+Examples of aspects that are relevant: modelling aspects of the specification, defining lemmas, proving them, adding intermediate assertions, optimizing the running time of the verifier, interacting with the prover, dealing with theories (such as properties of arithmetic), and so on.
+
+
+How much time is needed to run the proofs? On what hardware?
+
+Are the proofs fully automatic?
+
+If they are interactive: How much user effort was involved? How complex are the proof scripts?
+
+How much additional time do you think would it take you to complete all verification tasks (including removing any restricting assumptions you may have used)?
+
+
+
+
