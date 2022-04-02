@@ -92,7 +92,7 @@ sr merge (sr r1, sr r2) {
 
     if (t2) {
       /*@ loop invariant wf(res.data);
-	@ loop invariant 0 <= di1 <= get(r1.runs,ri1);
+	@ loop invariant 0 <= di2 <= get(r2.runs,ri2);
           loop assigns res, di2;
           loop variant get(r2.runs,ri2) - di2;
       */
