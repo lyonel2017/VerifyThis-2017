@@ -11,6 +11,7 @@ typedef struct array {
 
 /*@ logic integer length (array a) = a.index;
     logic int get (array a, unsigned int i) = a.a[i];
+    predicate wf (array a) = a.index <= N;
 */
 
 typedef struct sr {
@@ -18,7 +19,11 @@ typedef struct sr {
   array data;
 } sr;
 
-/*@ requires 0 <= i < a.index <= N;
+/*@ predicate wf_sr(sr r) = wf(r.runs) && wf(r.data);
+*/
+
+/*@ requires wf(a);
+    requires i < a.index;
     terminates \true;
     assigns \nothing;
     ensures \result == a.a[i];
@@ -27,7 +32,7 @@ int get (array a, unsigned int i) {
   return a.a[i];
 }
 
-/*@ requires 0 <= a.index <= N;
+/*@ requires wf(a);
     terminates \true;
     assigns \nothing;
     ensures \result == a.index;
@@ -36,11 +41,11 @@ unsigned int length (array a) {
   return a.index;
 }
 
-/*@ requires 0 <= a.index <= N;
+/*@ requires wf(a);
     terminates \true;
     assigns \nothing;
+    ensures wf(\result);
     ensures \result.index == a.index + 1;
-    ensures 0 <= \result.index <= N;
     ensures \result.a[a.index] == x;
     ensures \forall integer i; 0 <= i < a.index ==> \result.a[i] == a.a[i];
 */
@@ -51,7 +56,9 @@ array push_back (array a, int x) {
   return a;
 }
 
-/*@ terminates \true;
+/*@ requires wf_sr(r1);
+    requires wf_sr(r2);
+    terminates \true;
     assigns \nothing;
 */
 sr merge (sr r1, sr r2) {
@@ -63,6 +70,7 @@ sr merge (sr r1, sr r2) {
 
   /*@ loop invariant 0 <= ri1 <= length(r1.runs);
       loop invariant 0 <= ri2 <= length(r2.runs);
+      loop invariant wf(res.data);
       loop assigns res, ri1, ri2;
       loop variant length (r1.runs) + length (r2.runs) - ri1 - ri2;
   */
@@ -71,7 +79,8 @@ sr merge (sr r1, sr r2) {
     int t2 = ri2 < length(r2.runs) && (ri1 == length(r1.runs) || get(r2.data,di2) <= get(r1.data,di1));
 
     if (t1) {
-      /*@ loop assigns res;
+      /*@ loop invariant wf(res.data);
+          loop assigns res;
           loop variant get(r1.runs,ri1) - di1;
       */
       for (; di1 < get(r1.runs,ri1); ++di1) {
@@ -81,7 +90,8 @@ sr merge (sr r1, sr r2) {
     }
 
     if (t2) {
-      /*@ loop assigns res;
+      /*@ loop invariant wf(res.data);
+          loop assigns res;
           loop variant get(r2.runs,ri2) - di2;
       */
       for (; di2 < get(r2.runs,ri2); ++di2) {
