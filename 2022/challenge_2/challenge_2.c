@@ -31,7 +31,7 @@ typedef struct array {
 } array;
 
 /*@ logic integer length (array a) = a.index;
-    logic int get (array a, unsigned int i) = a.a[i];
+    logic int get (array a, integer i) = a.a[i];
     predicate wf (array a) = a.index <= N;
 */
 
@@ -41,7 +41,7 @@ typedef struct sr {
 } sr;
 
 /*@ predicate wf_sr(sr r) = wf(r.runs) && wf(r.data) &&
-      (\forall integer i; i <= 0 <= length(r.runs) ==> 0 <= get(r.runs,i) <= length(r.data));
+      (\forall integer i; 0 <= i <= length(r.runs) ==> 0 <= get(r.runs,i) <= length(r.data));
 */
 
 /*@ requires wf(a);
