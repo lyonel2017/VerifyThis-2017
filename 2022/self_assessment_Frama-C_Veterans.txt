@@ -22,9 +22,9 @@ How did you choose the tool to use? Was the choice related to the specific chall
 
 Which tool feature did you find most helpful to solve the challenge? Support of advanced C features (e.g. allocation of structures)
 
-Which tool limitation was the most significant obstacle to solve the challenge? Dynamic allocation is not really supported, no real support of concurrency
+Which tool limitation was the most significant obstacle to solve the challenge? Dynamic allocation is not fully supported, no real support of concurrency
 
-Is there any improvement to the tool that you would suggest based on your experience using it in the challenge? Better support of ACSL (e.g. lambda logic functions)
+Is there any improvement to the tool that you would suggest based on your experience using it in the challenge? Ssupport of ACSL features (e.g. lambda functions)
 
 If you would be doing the same challenge again, would you pick another tool to solve it? Why or why not? Frama-C is well-suited for challenges 1 and 2, we mainly need more time to solve the problems. We would probably pick another tool for challenge 3: there are plugins of Frama-C dealing with concurrency but they are outdated or not public.
 
@@ -204,7 +204,7 @@ Nothing verified
 
 
 For each property that is not verified or not verified completely: Could it be proved given more proof guidance (such as more complex invariants), or does it reflect an intrinsic limitation of the tool/method that was used?
-Hard limitation of the tool
+Limitation of the tool
 
 
 ## Process
